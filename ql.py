@@ -20,19 +20,23 @@ settings = os.path.expanduser("~/.qlrc")
 config = configparser.ConfigParser()
 
 def main():
+	"""
 	parser = argparse.ArgumentParser(description='ql: Quick Ledger entry.', prog='ql')
 	parser.add_argument('-f',
 		action='store', dest='file', default=None,
 		help='Specify Ledger file.')
 	args = parser.parse_args()
 	read_config(file=args.file)
+	"""
+	chooser()
 
+"""
 def read_config(file):
 	if os.path.exists(settings):
 		config.read(settings)
 	chooser(file)
-
-def chooser(file):
+"""
+def chooser():
 	transdate = input("Transaction date: ")	
 	merchant = input("Merchant name: ")	
 	category = input("Expense category: ")	
