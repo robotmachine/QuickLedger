@@ -14,7 +14,7 @@
 * To Public License, Version 2, as published by Sam Hocevar. See
 * http://sam.zoy.org/wtfpl/COPYING for more details.
 """
-import os, sys, argparse, configparser
+import os, sys, datetime, argparse, configparser
 
 settings = os.path.expanduser("~/.qlrc")
 config = configparser.ConfigParser()
@@ -28,20 +28,26 @@ def main():
 	args = parser.parse_args()
 	read_config(file=args.file)
 	"""
-	chooser()
+	datesel()
 
+def datesel():
+	tdateraw = []
+	today = datetime.date.today()
+	tdateraw.append(today)
+	tdate = str(tdateraw[0])
+	chooser(tdate)
+	
 """
 def read_config(file):
 	if os.path.exists(settings):
 		config.read(settings)
 	chooser(file)
 """
-def chooser():
-	transdate = input("Transaction date: ")	
+def chooser(tdate):
 	merchant = input("Merchant name: ")	
 	category = input("Expense category: ")	
 	amount = input("Amount: $")	
-	print("%s * %s" % (transdate, merchant))
+	print("%s * %s" % (tdate, merchant))
 	print("\tExpenses:%s\t\t%s" % (category, amount))
 	print("\tAssets:OSU:Brian")
 	quit()
