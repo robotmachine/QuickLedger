@@ -28,14 +28,18 @@ def main():
 	read_config(file=args.file)
 
 def read_config(file):
-	"""
-	if os.path.exists(settings):
-		config.read(settings)
-	if not os.path.exists(settings):
-		set_config()
-	"""
-	datesel(file)
+	if file is None:
+		if os.path.exists(settings):
+			config.read(settings)
+		if not os.path.exists(settings):
+			set_config()
+	else:
+		datesel(file)
 
+def set_config():
+	file = None
+	datesel(file)
+		
 def datesel(file):
 	tdateraw = []
 	today = datetime.date.today()
