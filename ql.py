@@ -20,35 +20,36 @@ settings = os.path.expanduser("~/.qlrc")
 config = configparser.ConfigParser()
 
 def main():
-	"""
 	parser = argparse.ArgumentParser(description='ql: Quick Ledger entry.', prog='ql')
 	parser.add_argument('-f',
 		action='store', dest='file', default=None,
 		help='Specify Ledger file.')
 	args = parser.parse_args()
 	read_config(file=args.file)
-	"""
-	datesel()
 
-def datesel():
+def read_config(file):
+	"""
+	if os.path.exists(settings):
+		config.read(settings)
+	if not os.path.exists(settings):
+		set_config()
+	"""
+	datesel(file)
+
+def datesel(file):
 	tdateraw = []
 	today = datetime.date.today()
 	tdateraw.append(today)
 	tdate = str(tdateraw[0])
-	chooser(tdate)
+	chooser(file, tdate)
 	
-"""
-def read_config(file):
-	if os.path.exists(settings):
-		config.read(settings)
-	chooser(file)
-"""
-def chooser(tdate):
+def chooser(file, tdate):
 	merchant = input("Merchant name: ")	
 	category = input("Expense category: ")	
 	amount = input("Amount: $")	
+	print("%s" % (file))
 	print("%s * %s" % (tdate, merchant))
-	print("\tExpenses:%s\t\t%s" % (category, amount))
+	print("\tExpenses:%s\t\t$%s" % (category, amount))
 	print("\tAssets:OSU:Brian")
 	quit()
 main()
