@@ -26,10 +26,10 @@ def main():
 	"""
 	parser = argparse.ArgumentParser(description='ql: Quick Ledger entry.', prog='ql')
 	parser.add_argument('-f',
-		action='store', dest='file', default=None,
+		action='store', dest='ledger_file', default=None,
 		help='Specify Ledger file.')
 	args = parser.parse_args()
-	read_config(file=args.file)
+	read_config(ledger_file=args.ledger_file)
 
 def read_config(ledger_file):
 	"""
@@ -44,7 +44,7 @@ def read_config(ledger_file):
 		if not os.path.exists(settings):
 			set_config()
 	else:
-		datesel(file)
+		datesel(ledger_file)
 
 def set_config():
 	if os.environ['LEDGER']:
@@ -61,14 +61,14 @@ def set_config():
 		file = input("Ledger file location: ")
 	datesel(file)
 
-def datesel(file):
+def datesel(ledger_file):
 	tdateraw = []
 	today = datetime.date.today()
 	tdateraw.append(today)
 	tdate = str(tdateraw[0])
-	chooser(file, tdate)
+	chooser(ledger_file, tdate)
 	
-def chooser(file, tdate):
+def chooser(ledger_file, tdate):
 	merchant = input("Merchant name: ")	
 	category = input("Expense category: ")	
 	amount = input("Amount: $")	
