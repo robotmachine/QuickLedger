@@ -89,9 +89,7 @@ def chooser(ledger_file, tdate):
 	category = input("Expense category: ")	
 	amount = input("Amount: $")	
 	with open(ledger_file, "a") as ledger_write:
-		ledger_write.write(tdate+" * "+merchant+"\n")
-		ledger_write.write("\tExpenses:"+category+"\t\t$"+amount+"\n")
-		ledger_write.write("\tAssets:OSU:Brian"+"\n")
+		ledger_write.write(tdate+" * "+merchant+"\n\tExpenses:"+category+"\t\t$"+amount+"\n\tAssets:OSU:Brian"+"\n")
 		ledger_write.close()
 	quit()
 main()
