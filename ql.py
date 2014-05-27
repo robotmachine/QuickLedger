@@ -27,17 +27,6 @@ def main():
 	args = parser.parse_args()
 	read_config(file=args.file)
 
-    while True:
-        sys.stdout.write(question + prompt)
-        choice = input().lower()
-        if default is not None and choice == '':
-            return valid[default]
-        elif choice in valid:
-            return valid[choice]
-        else:
-            sys.stdout.write("Please respond with 'yes' or 'no' "\
-                             "(or 'y' or 'n').\n")
-
 def read_config(file):
 	if file is None:
 		if os.path.exists(settings):
