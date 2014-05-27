@@ -2,6 +2,7 @@
 """
 =-=-=- ql -=-=-=
 | Quick Ledger |
+|    v.0.5     |
 =-=-=-=-=-=-=-=-
 *
 * Brian Carter
