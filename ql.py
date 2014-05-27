@@ -16,10 +16,14 @@
 """
 import os, sys, textwrap, datetime, argparse, configparser, distutils.util
 
+""" Settings are stored in .qlrc in user's home folder. """
 settings = os.path.expanduser("~/.qlrc")
 config = configparser.ConfigParser()
 
 def main():
+	"""
+	Reads command line arguments to determine if a file is specified.		
+	"""
 	parser = argparse.ArgumentParser(description='ql: Quick Ledger entry.', prog='ql')
 	parser.add_argument('-f',
 		action='store', dest='file', default=None,
@@ -27,8 +31,14 @@ def main():
 	args = parser.parse_args()
 	read_config(file=args.file)
 
-def read_config(file):
-	if file is None:
+def read_config(ledger_file):
+	"""
+	If a settings file is specified on the command line, then just skip to the 
+	actual ledger entry. If not, ql checks for the file. If it is there, then 
+	ql reads from it. If there is no settings file and no file was specified, then
+	we move to set up the config file.	
+	"""
+	if ledger_file is None:
 		if os.path.exists(settings):
 			config.read(settings)
 		if not os.path.exists(settings):
