@@ -41,7 +41,9 @@ def read_config(ledger_file):
 	if ledger_file is None:
 		if os.path.exists(settings):
 			config.read(settings)
-		if not os.path.exists(settings):
+			ledger_file = config['ql']['ledger_file']
+			datesel(ledger_file)
+		else:
 			set_config()
 	else:
 		datesel(ledger_file)
