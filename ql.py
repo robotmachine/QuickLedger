@@ -14,7 +14,7 @@
 * To Public License, Version 2, as published by Sam Hocevar. See
 * http://sam.zoy.org/wtfpl/COPYING for more details.
 """
-import os, sys, textwrap, datetime, argparse, configparser
+import os, sys, textwrap, datetime, argparse, configparser, distutils.util
 
 settings = os.path.expanduser("~/.qlrc")
 config = configparser.ConfigParser()
