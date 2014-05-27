@@ -48,10 +48,12 @@ def read_config(ledger_file):
 
 def set_config():
 	if os.environ['LEDGER']:
-		system_ledger = str(os.environ['LEDGER'])
+		system_ledger = os.path.expanduser(os.environ['LEDGER'])
 	elif os.environ['LEDGER_FILE']:
-		system_ledger = str(os.environ['LEDGER_FILE'])
-	if system_ledger:
+		system_ledger = os.path.expanduser(os.environ['LEDGER_FILE'])
+	else:
+		system_ledger = None
+	if system_ledger is not None: 
 		print(textwrap.dedent("""
 		Looks like your default ledger file is
 		%s
