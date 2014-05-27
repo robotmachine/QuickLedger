@@ -60,10 +60,21 @@ def set_config():
 		Looks like your default ledger file is
 		%s
 		""") % (system_ledger))
-		file = system_ledger
-	else:
-		file = input("Ledger file location: ")
-	datesel(file)
+		query = input("Use this file for ql? [y/n] ")
+		boolquery = distutils.util.strtobool(query)
+		if boolquery == True:
+			led_file = system_ledger
+		else:
+			led_input = input("Ledger file location: ")
+			led_file = os.path.expanduser(led_input)	
+			if not os.path.isfile(led_file):
+				print("File not found.")
+				quit()	
+	if os.path.isfile(led_file):
+		config ['ql'] = {'ledger_file': led_file}
+		with open(settings, 'w') as configfile:
+			config.write(configfile)
+		read_config(led_file)
 
 def datesel(ledger_file):
 	tdateraw = []
