@@ -44,11 +44,18 @@ def read_config(ledger_file):
 		if os.path.exists(settings):
 			config.read(settings)
 			ledger_file = config['ql']['ledger_file']
-			datesel(ledger_file)
+			if os.path.isfile(ledger_file):
+				datesel(ledger_file)
+			else:
+				print("Error! Cannot find %s" % ledger_file)
 		else:
 			set_config()
 	else:
-		datesel(ledger_file)
+		if os.path.isfile(ledger_file):
+			datesel(ledger_file)
+		else:
+			print("Error! Cannot find %s" % ledger_file)
+			quit()
 
 def set_config():
 	if os.environ['LEDGER']:
@@ -83,23 +90,33 @@ def datesel(ledger_file):
 	today = datetime.date.today()
 	tdateraw.append(today)
 	tdate = str(tdateraw[0])
-	amountsel(ledger_file, tdate)
+	merchsel(ledger_file, tdate)
 
-def amountsel(ledger_file, tdate):
+def merchsel(ledger_file, tdate):
+	try:
+		merchant = str(input("Merchant name: "))
+		category = str(input("Expense category: "))
+	except:
+		print("Syntax error.")
+		merchsel(ledger_file, tdate)
+	amountsel(ledger_file, tdate, merchant, category)
+
+def amountsel(ledger_file, tdate, merchant, category):
 	try:
 		amount_dec = Decimal(input("Amount: $")).quantize(Decimal('1.00'))
 	except: 
 		print("Amount must be a number.")
-		amountsel(ledger_file, tdate)
+		amountsel(ledger_file, tdate, merchant, category)
 	amount = str(amount_dec)
-	printer(ledger_file, tdate, amount)
+	printer(ledger_file, tdate, merchant, category, amount)
 
-def printer(ledger_file, tdate, amount):
-	merchant = input("Merchant name: ")	
-	category = input("Expense category: ")	
-	with open(ledger_file, "a") as ledger_write:
-		ledger_write.write(tdate+" * "+merchant+"\n\tExpenses:"+category+"\t\t$"+amount+"\n\tAssets:OSU:Brian"+"\n")
-		ledger_write.close()
-	print("Wrote entry:\n"+tdate+" * "+merchant+"\n\tExpenses:"+category+"\t\t$"+amount+"\n\tAssets:OSU:Brian")
+def printer(ledger_file, tdate, merchant, category, amount):
+	try:
+		with open(ledger_file, "a") as ledger_write:
+			ledger_write.write(tdate+" * "+merchant+"\n\tExpenses:"+category+"\t\t$"+amount+"\n\tAssets:OSU:Brian"+"\n")
+			ledger_write.close()
+			print("Wrote entry:\n"+tdate+" * "+merchant+"\n\tExpenses:"+category+"\t\t$"+amount+"\n\tAssets:OSU:Brian")
+	except PermissionError:
+		print("Cannot write to %s. Permission error!" % ledger_file)
 	quit()
 main()
