@@ -16,6 +16,7 @@
 * http://sam.zoy.org/wtfpl/COPYING for more details.
 """
 import os, sys, textwrap, datetime, argparse, configparser, distutils.util
+from decimal import *
 
 """ Settings are stored in .qlrc in user's home folder. """
 settings = os.path.expanduser("~/.qlrc")
@@ -82,12 +83,20 @@ def datesel(ledger_file):
 	today = datetime.date.today()
 	tdateraw.append(today)
 	tdate = str(tdateraw[0])
-	chooser(ledger_file, tdate)
-	
-def chooser(ledger_file, tdate):
+	amountsel(ledger_file, tdate)
+
+def amountsel(ledger_file, tdate):
+	try:
+		amount_dec = Decimal(input("Amount: $")).quantize(Decimal('1.00'))
+	except: 
+		print("Amount must be a number.")
+		amountsel(ledger_file, tdate)
+	amount = str(amount_dec)
+	printer(ledger_file, tdate, amount)
+
+def printer(ledger_file, tdate, amount):
 	merchant = input("Merchant name: ")	
 	category = input("Expense category: ")	
-	amount = input("Amount: $")	
 	with open(ledger_file, "a") as ledger_write:
 		ledger_write.write(tdate+" * "+merchant+"\n\tExpenses:"+category+"\t\t$"+amount+"\n\tAssets:OSU:Brian"+"\n")
 		ledger_write.close()
