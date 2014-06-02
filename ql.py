@@ -100,5 +100,6 @@ def printer(ledger_file, tdate, amount):
 	with open(ledger_file, "a") as ledger_write:
 		ledger_write.write(tdate+" * "+merchant+"\n\tExpenses:"+category+"\t\t$"+amount+"\n\tAssets:OSU:Brian"+"\n")
 		ledger_write.close()
+	print("Wrote entry:\n"+tdate+" * "+merchant+"\n\tExpenses:"+category+"\t\t$"+amount+"\n\tAssets:OSU:Brian")
 	quit()
 main()
