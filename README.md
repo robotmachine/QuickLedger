@@ -21,7 +21,7 @@
 >[ql]  
 >ledger_file = /home/robotmachine/Doc/Ledger/Ledger.dat  
 >default = BANK  
->BANK = Assets:Bank:Personal
+>BANK = Assets:Bank:Personal  
 >SAVE = Assets:Bank:Savings  
   
 `ql` with no arguments for account or nickname will read the account listed as default. Running `ql --nick SAVE` will use the account nicknamed SAVE from qlrc.
