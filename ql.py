@@ -26,7 +26,7 @@ def main():
 	"""
 	Reads command line arguments to determine if a file is specified.		
 	"""
-	parser = argparse.ArgumentParser(description='ql: Quick Ledger entry.', prog='ql')
+	parser = argparse.ArgumentParser(description="ql: Quick `ledger' entry creation tool.", prog='ql')
 	parser.add_argument('-f',
 		action='store', dest='ledger_file', default=None,
 		help='Specify Ledger file.')
