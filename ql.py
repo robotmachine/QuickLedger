@@ -128,6 +128,9 @@ def merchsel(ledger_file, account, tdate):
 		category = str("Expenses:")+str(input("Expense category:\n\tExpenses:"))
 		if account is None:
 			account = str("Assets:")+str(input("Account:\n\tAssets:"))
+	except KeyboardInterrupt:
+		print("\nUser exit.")
+		quit()
 	except:
 		print("Syntax error.")
 		merchsel(ledger_file, account, tdate)
@@ -136,6 +139,9 @@ def merchsel(ledger_file, account, tdate):
 def amountsel(ledger_file, tdate, merchant, category, account):
 	try:
 		amount_dec = Decimal(input("Amount: $")).quantize(Decimal('1.00'))
+	except KeyboardInterrupt:
+		print("\nUser exit.")
+		quit()
 	except: 
 		print("Amount must be a number.")
 		amountsel(ledger_file, tdate, merchant, category, account)
