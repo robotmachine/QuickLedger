@@ -32,19 +32,19 @@ def main():
 		help='Specify Ledger file.')
 	parser.add_argument('-a', '--account',
 		action='store', dest='account', default=None,
-		help='Not Yet Implemented: Specify account.')
-	parser.add_argument('--set-nick',
-		action='store_true', dest='set_nick',
-		help='Add account nicknames to .qlrc')
-	parser.add_argument('-n', '--nick',
-		action='store', dest='nickname', default=None,
-		help='Specify account from qlrc by nickname.')
+		help="Specify account from ql's configuration file.")
+	parser.add_argument('-m', '--merchant',
+		action='store', dest='merchant', default=None,
+		help='Not Implemented')
+	parser.add_argument('--set-acct',
+		action='store_true', dest='set_acct',
+		help="Add accounts to ql's configuration file.")
 	args = parser.parse_args()
-	if args.set_nick:
-		set_nick()
-	read_config(ledger_file=args.ledger_file, account=args.account, nick=args.nickname)
+	if args.set_acct:
+		set_acct()
+	read_config(ledger_file=args.ledger_file, account=args.account, merchant=args.merchant)
 
-def read_config(ledger_file, account, nick):
+def read_config(ledger_file, account, merchant):
 	"""
 	If a settings file is specified on the command line, then just skip to the 
 	actual ledger entry. If not, ql checks for the file. If it is there, then 
@@ -60,7 +60,7 @@ def read_config(ledger_file, account, nick):
 				ledger_file = None
 		if account is None:
 			try:
-				default_account = config['ql']['default']
+				default_account = config['ql']['default_account']
 			except:
 				default_account = None
 			if default_account is not None:
@@ -68,20 +68,22 @@ def read_config(ledger_file, account, nick):
 					account = config['ql'][default_account]
 				except:
 					account = None
-		if nick is not None:
+		"""
+		if merchant is not None:
 			try:
-				account = config['ql'][nick]
+				account = config['ql'][merchant]
 			except:
-				print("No account called %s found in .qlrc" % nick)
+				print("No merchant named %s found in ql configuration file." % merchant)
+		"""
 			
 		if os.path.isfile(ledger_file):
-			datesel(ledger_file, account)
+			datesel(ledger_file, account, merchant)
 		else:
 			print("Error! Cannot find %s" % ledger_file)
 	else:
-		set_config(account, nick)
+		set_config(account, merchant)
 
-def set_config(account, nick):
+def set_config(account, merchant):
 	"""
 	Checks for both $LEDGER and $LEDGER_FILE environment variables.
 	Sets system_ledger to their value if they exist.
@@ -133,20 +135,20 @@ def set_config(account, nick):
 		config ['ql'] = {'ledger_file': led_file}
 		with open(settings, 'w') as configfile:
 			config.write(configfile)
-		read_config(led_file, account, nick)
+		read_config(led_file, account, merchant)
 
-def set_nick():
+def set_account():
 	print("You are a star.")
 	quit()
 
-def datesel(ledger_file, account):
+def datesel(ledger_file, account, merchant):
 	tdateraw = []
 	today = datetime.date.today()
 	tdateraw.append(today)
 	tdate = str(tdateraw[0])
-	merchsel(ledger_file, account, tdate)
+	merchsel(ledger_file, account, merchant, tdate)
 
-def merchsel(ledger_file, account, tdate):
+def merchsel(ledger_file, account, merchant, tdate):
 	try:
 		merchant = str(input("Merchant name:\n\t"))
 		category = str("Expenses:")+str(input("Expense category:\n\tExpenses:"))
