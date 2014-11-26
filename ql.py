@@ -42,16 +42,20 @@ def main():
 		help="Specify account from ql's configuration file.")
 	parser.add_argument('-m', '--merchant',
 		action='store', dest='merchant', default=None,
-		help='Not Implemented')
+		help='Set merchant.')
 	parser.add_argument('--set-acct',
 		action='store_true', dest='set_acct',
 		help="Add accounts to ql's configuration file.")
 	args = parser.parse_args()
 	if args.set_acct:
-		set_acct()
-	read_config(ledger_file=args.ledger_file, account=args.account, merchant=args.merchant)
+		set_account()
+	category = None
+	ledger_file = args.ledger_file
+	account = args.account
+	merchant = args.merchant
+	read_config(ledger_file, account, merchant, category)
 
-def read_config(ledger_file, account, merchant):
+def read_config(ledger_file, account, merchant, category):
 	"""
 	If a settings file is specified on the command line, then just skip to the 
 	actual ledger entry. If not, ql checks for the file. If it is there, then 
@@ -67,30 +71,29 @@ def read_config(ledger_file, account, merchant):
 				ledger_file = None
 		if account is None:
 			try:
-				default_account = config['ql']['default_account']
+				account = config['ql']['default_account']
 			except:
-				default_account = None
-			if default_account is not None:
-				try:
-					account = config['ql'][default_account]
-				except:
-					account = None
-		"""
+				account = None
+		elif account is not None:
+			try:
+				account = config['ql'][account]
+			except:
+					account = account
 		if merchant is not None:
 			try:
-				account = config['ql'][merchant]
+				category = config['ql'][merchant+'_CAT']
+				merchant = config['ql'][merchant]
 			except:
-				print("No merchant named %s found in ql configuration file." % merchant)
-		"""
-			
+				merchant = merchant	
+
 		if os.path.isfile(ledger_file):
-			datesel(ledger_file, account, merchant)
+			datesel(ledger_file, account, merchant, category)
 		else:
 			print("Error! Cannot find %s" % ledger_file)
 	else:
-		set_config(account, merchant)
+		set_config(account, merchant, category)
 
-def set_config(account, merchant):
+def set_config(account, merchant, category):
 	"""
 	Checks for both $LEDGER and $LEDGER_FILE environment variables.
 	Sets system_ledger to their value if they exist.
@@ -142,39 +145,53 @@ def set_config(account, merchant):
 		config ['ql'] = {'ledger_file': led_file}
 		with open(settings, 'w') as configfile:
 			config.write(configfile)
-		read_config(led_file, account, merchant)
+		read_config(led_file, account, merchant, category)
 
 def set_account():
 	print("You are a star.")
 	quit()
 
-def datesel(ledger_file, account, merchant):
+def datesel(ledger_file, account, merchant, category):
 	tdateraw = []
 	today = datetime.date.today()
 	tdateraw.append(today)
 	tdate = str(tdateraw[0])
-	merchsel(ledger_file, account, merchant, tdate)
+	merchsel(ledger_file, account, merchant, category, tdate)
 
-def merchsel(ledger_file, account, merchant, tdate):
-	try:
-		merchant = str(input("Merchant name:\n\t"))
-		category = str("Expenses:")+str(input("Expense category:\n\tExpenses:"))
-		if account is None:
+def merchsel(ledger_file, account, merchant, category, tdate):
+	if merchant is None:
+		try:
+			merchant = str(input("Merchant name:\n\t"))
+		except KeyboardInterrupt:
+			user_exit()
+		except:
+			print("Syntax error.")
+			merchsel(ledger_file, account, merchant, tdate)
+	else:
+		str(merchant)
+	if category is None:
+		try:
+			category = str("Expenses:")+str(input("Expense category:\n\tExpenses:"))
+		except KeyboardInterrupt:
+			user_exit()
+		except:
+			print("Syntax error.")
+			merchsel(ledger_file, account, merchant, tdate)
+	if account is None:
+		try:
 			account = str("Assets:")+str(input("Account:\n\tAssets:"))
-	except KeyboardInterrupt:
-		print("\nUser exit.")
-		quit()
-	except:
-		print("Syntax error.")
-		merchsel(ledger_file, account, tdate)
+		except KeyboardInterrupt:
+			user_exit()
+		except:
+			print("Syntax error.")
+			merchsel(ledger_file, account, merchant, tdate)
 	amountsel(ledger_file, tdate, merchant, category, account)
 
 def amountsel(ledger_file, tdate, merchant, category, account):
 	try:
 		amount_dec = Decimal(input("Amount: $")).quantize(Decimal('1.00'))
 	except KeyboardInterrupt:
-		print("\nUser exit.")
-		quit()
+		user_exit()
 	except: 
 		print("Amount must be a number.")
 		amountsel(ledger_file, tdate, merchant, category, account)
@@ -190,5 +207,8 @@ def printer(ledger_file, tdate, merchant, category, account, amount):
 			print("\n\nWrote entry to "+ledger_file+":\n\n"+ledger_entry)
 	except PermissionError:
 		print("Cannot write to %s. Permission error!" % ledger_file)
+	quit()
+def user_exit():
+	print("\nUser exited.")
 	quit()
 main()
