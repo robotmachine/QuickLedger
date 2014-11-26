@@ -77,6 +77,7 @@ def read_config(ledger_file, account, nick):
 		set_config(account)
 
 def set_config(account):
+	nick = None
 	try:
 		if os.environ['LEDGER']:
 			system_ledger = os.path.expanduser(os.environ['LEDGER'])
@@ -113,7 +114,7 @@ def set_config(account):
 		config ['ql'] = {'ledger_file': led_file}
 		with open(settings, 'w') as configfile:
 			config.write(configfile)
-		read_config(led_file, account)
+		read_config(led_file, account, nick)
 
 def datesel(ledger_file, account):
 	tdateraw = []
