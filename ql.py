@@ -66,23 +66,23 @@ def read_config(ledger_file, account, merchant, category):
 		config.read(settings)
 		if ledger_file is None:
 			try:
-				ledger_file = config['ql']['ledger_file']
+				ledger_file = config['file']['ledger_file']
 			except:
 				ledger_file = None
 		if account is None:
 			try:
-				account = config['ql']['default_account']
+				account = config['acct']['default_account']
 			except:
 				account = None
-		elif account is not None:
+		if account is not None:
 			try:
-				account = config['ql'][account]
+				account = config['acct'][account]
 			except:
 					account = account
 		if merchant is not None:
 			try:
-				category = config['ql'][merchant+'_CAT']
-				merchant = config['ql'][merchant]
+				category = config['merc'][merchant+'_CAT']
+				merchant = config['merc'][merchant]
 			except:
 				merchant = merchant	
 
@@ -142,7 +142,7 @@ def set_config(account, merchant, category):
 	If it does, then it writes that value to .qlrc in the $HOME folder.
 	"""	
 	if os.path.isfile(led_file):
-		config ['ql'] = {'ledger_file': led_file}
+		config ['file'] = {'ledger_file': led_file}
 		with open(settings, 'w') as configfile:
 			config.write(configfile)
 		read_config(led_file, account, merchant, category)
