@@ -43,13 +43,16 @@ def main():
 	parser.add_argument('-m', '--merchant',
 		action='store', dest='merchant', default=None,
 		help='Set merchant.')
+	parser.add_argument('-c', '--category',
+		action='store', dest='category', default=None,
+		help='Set category.')
 	parser.add_argument('--set-acct',
 		action='store_true', dest='set_acct',
 		help="Add accounts to ql's configuration file.")
 	args = parser.parse_args()
 	if args.set_acct:
 		set_account()
-	category = None
+	category = args.category
 	ledger_file = args.ledger_file
 	account = args.account
 	merchant = args.merchant
@@ -168,7 +171,7 @@ def merchsel(ledger_file, account, merchant, category, tdate):
 			print("Syntax error.")
 			merchsel(ledger_file, account, merchant, tdate)
 	else:
-		str(merchant)
+		merchant = str(merchant)
 	if category is None:
 		try:
 			category = str("Expenses:")+str(input("Expense category:\n\tExpenses:"))
@@ -177,6 +180,8 @@ def merchsel(ledger_file, account, merchant, category, tdate):
 		except:
 			print("Syntax error.")
 			merchsel(ledger_file, account, merchant, tdate)
+	else:
+		category = str(category)
 	if account is None:
 		try:
 			account = str("Assets:")+str(input("Account:\n\tAssets:"))
