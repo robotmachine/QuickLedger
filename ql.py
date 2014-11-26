@@ -74,10 +74,13 @@ def read_config(ledger_file, account, nick):
 		else:
 			print("Error! Cannot find %s" % ledger_file)
 	else:
-		set_config(account)
+		set_config(account, nick)
 
-def set_config(account):
-	nick = None
+def set_config(account, nick):
+	"""
+	Checks for both $LEDGER and $LEDGER_FILE environment variables.
+	Sets system_ledger to their value if they exist.
+	"""
 	try:
 		if os.environ['LEDGER']:
 			system_ledger = os.path.expanduser(os.environ['LEDGER'])
@@ -85,6 +88,10 @@ def set_config(account):
 			system_ledger = os.path.expanduser(os.environ['LEDGER_FILE'])
 	except:
 		system_ledger = None
+
+	"""
+	Asks if the above value should be set as the default file for `ql'
+	"""
 	if system_ledger is not None: 
 		print(textwrap.dedent("""
 		Looks like your default ledger file is
@@ -102,14 +109,21 @@ def set_config(account):
 			led_file = None
 	else:
 		led_file = None
-
+	"""
+	If either the $LEDGER and $LEDGER_FILE variables are empty or the user
+	declines to use their value, it will request that the file be typed in manually.
+	If the file is not found, an error will print.
+	"""
 	if led_file is None:
 		led_input = input("Ledger file location: ")
 		led_file = os.path.expanduser(led_input)	
 		if not os.path.isfile(led_file):
 			print("File not found.")
 			quit()	
-	
+	"""
+	Checks again to make sure the ledger_file actually exists.
+	If it does, then it writes that value to .qlrc in the $HOME folder.
+	"""	
 	if os.path.isfile(led_file):
 		config ['ql'] = {'ledger_file': led_file}
 		with open(settings, 'w') as configfile:
