@@ -32,11 +32,16 @@ def main():
 		help='Specify Ledger file.')
 	parser.add_argument('-a', '--account',
 		action='store', dest='account', default=None,
-		help='Specify account.')
+		help='Not Yet Implemented: Specify account.')
+	parser.add_argument('--set-nick',
+		action='store_true', dest='set_nick',
+		help='Add account nicknames to .qlrc')
 	parser.add_argument('-n', '--nick',
 		action='store', dest='nickname', default=None,
 		help='Specify account from qlrc by nickname.')
 	args = parser.parse_args()
+	if args.set_nick:
+		set_nick()
 	read_config(ledger_file=args.ledger_file, account=args.account, nick=args.nickname)
 
 def read_config(ledger_file, account, nick):
@@ -129,6 +134,10 @@ def set_config(account, nick):
 		with open(settings, 'w') as configfile:
 			config.write(configfile)
 		read_config(led_file, account, nick)
+
+def set_nick():
+	print("You are a star.")
+	quit()
 
 def datesel(ledger_file, account):
 	tdateraw = []
