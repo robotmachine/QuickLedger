@@ -46,6 +46,9 @@ def main():
 	parser.add_argument('-c', '--category',
 		action='store', dest='category', default=None,
 		help='Set category.')
+	parser.add_argument('-e', '--expense',
+		action='store', dest='expense', default=None,
+		help='Set expense category.')
 	parser.add_argument('--set-acct',
 		action='store_true', dest='set_acct',
 		help="Add accounts to ql's configuration file.")
@@ -53,6 +56,8 @@ def main():
 	if args.set_acct:
 		set_account()
 	category = args.category
+	if args.expense:
+		category = str('Expenses:'+args.expense)
 	ledger_file = args.ledger_file
 	account = args.account
 	merchant = args.merchant
