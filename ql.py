@@ -49,6 +49,9 @@ def main():
 	parser.add_argument('-e', '--expense',
 		action='store', dest='expense', default=None,
 		help='Set expense category.')
+	parser.add_argument('-t', '--amount',
+		action='store', dest='amount', default=None,
+		help='Set dollar amount.')
 	parser.add_argument('--set-acct',
 		action='store_true', dest='set_acct',
 		help="Add accounts to ql's configuration file.")
@@ -59,11 +62,12 @@ def main():
 	if args.expense:
 		category = str('Expenses:'+args.expense)
 	ledger_file = args.ledger_file
+	amount = args.amount
 	account = args.account
 	merchant = args.merchant
-	read_config(ledger_file, account, merchant, category)
+	read_config(ledger_file, account, merchant, category, amount)
 
-def read_config(ledger_file, account, merchant, category):
+def read_config(ledger_file, account, merchant, category, amount):
 	"""
 	If a settings file is specified on the command line, then just skip to the 
 	actual ledger entry. If not, ql checks for the file. If it is there, then 
@@ -95,13 +99,13 @@ def read_config(ledger_file, account, merchant, category):
 				merchant = merchant	
 
 		if os.path.isfile(ledger_file):
-			datesel(ledger_file, account, merchant, category)
+			datesel(ledger_file, account, merchant, category, amount)
 		else:
 			print("Error! Cannot find %s" % ledger_file)
 	else:
-		set_config(account, merchant, category)
+		set_config(account, merchant, category, amount)
 
-def set_config(account, merchant, category):
+def set_config(account, merchant, category, amount):
 	"""
 	Checks for both $LEDGER and $LEDGER_FILE environment variables.
 	Sets system_ledger to their value if they exist.
@@ -153,20 +157,20 @@ def set_config(account, merchant, category):
 		config ['file'] = {'ledger_file': led_file}
 		with open(settings, 'w') as configfile:
 			config.write(configfile)
-		read_config(led_file, account, merchant, category)
+		read_config(led_file, account, merchant, category, amount)
 
 def set_account():
 	print("You are a star.")
 	quit()
 
-def datesel(ledger_file, account, merchant, category):
+def datesel(ledger_file, account, merchant, category, amount):
 	tdateraw = []
 	today = datetime.date.today()
 	tdateraw.append(today)
 	tdate = str(tdateraw[0])
-	merchsel(ledger_file, account, merchant, category, tdate)
+	merchsel(ledger_file, account, merchant, category, amount, tdate)
 
-def merchsel(ledger_file, account, merchant, category, tdate):
+def merchsel(ledger_file, account, merchant, category, amount, tdate):
 	if merchant is None:
 		try:
 			merchant = str(input("Merchant name:\n\t"))
@@ -195,16 +199,24 @@ def merchsel(ledger_file, account, merchant, category, tdate):
 		except:
 			print("Syntax error.")
 			merchsel(ledger_file, account, merchant, tdate)
-	amountsel(ledger_file, tdate, merchant, category, account)
+	amountsel(ledger_file, tdate, merchant, category, amount, account)
 
-def amountsel(ledger_file, tdate, merchant, category, account):
-	try:
-		amount_dec = Decimal(input("Amount: $")).quantize(Decimal('1.00'))
-	except KeyboardInterrupt:
-		user_exit()
-	except: 
-		print("Amount must be a number.")
-		amountsel(ledger_file, tdate, merchant, category, account)
+def amountsel(ledger_file, tdate, merchant, category, amount, account):
+	if amount is None:
+		try:
+			amount_dec = Decimal(input("Amount: $")).quantize(Decimal('1.00'))
+		except KeyboardInterrupt:
+			user_exit()
+		except: 
+			print("Amount must be a number.")
+			amountsel(ledger_file, tdate, merchant, category, amount, account)
+	elif amount is not None:
+		try:
+			amount_dec = Decimal(amount).quantize(Decimal('1.00'))
+		except:
+			print("Amount must be a number.")
+			amount = None
+			amountsel(ledger_file, tdate, merchant, category, amount, account)
 	amount = str(amount_dec)
 	printer(ledger_file, tdate, merchant, category, account, amount)
 
