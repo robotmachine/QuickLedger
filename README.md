@@ -8,7 +8,7 @@ Clone the repository, `chmod +x ql.py` and move ql.py somewhere in your $PATH.
 The first time you run `ql` it will try to figure out where your Ledger data  
 file is located based on `$LEDGER` and `$LEDGER_FILE` environment variables.  
 If nothing is found, it will just ask you.  
-  
+<p>  
 > usage: ql [-h] [-f LEDGER_FILE] [-a ACCOUNT] [-m MERCHANT] [-c CATEGORY] [-e EXPENSE] [-t AMOUNT] [--set-acct]
 >   
 > ql: Quick `ledger' entry creation tool.  
@@ -28,7 +28,7 @@ If nothing is found, it will just ask you.
 >   -t AMOUNT, --amount AMOUNT  
 >                         Set dollar amount.  
 >   --set-acct            Add accounts to ql's configuration file.  
-  
+</p>  
 #### Configuration File  
 `ql` keeps all data in `$HOME/.qlrc`  
 Here is a sample of what one might look like:  
