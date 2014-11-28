@@ -32,18 +32,20 @@ optional arguments:
 #### Configuration File  
 `ql` keeps all data in `$HOME/.qlrc`  
 Here is a sample of what one might look like:  
-`cat ~/.qlrc`  
-> [file]  
-> ledger_file = /home/robotmachine/doc/Ledger.dat  
-> [acct]
-> default_account = CHEQ 
-> CHEQ = Assets:MyBank:Chequing  
-> SAVE = Assets:MyBank:Savings  
-> [merc]  
-> SD = Sundance Natural Foods  
-> SD_CAT = Expenses:Groceries  
-> SQ = SeQUential Biofuels  
-> SQ_CAT = Expenses:Auto:Fuel  
+```
+cat ~/.qlrc
+[file]  
+ledger_file = /home/robotmachine/doc/Ledger.dat  
+[acct]
+default_account = CHEQ 
+CHEQ = Assets:MyBank:Chequing  
+SAVE = Assets:MyBank:Savings  
+[merc]  
+SD = Sundance Natural Foods  
+SD_CAT = Expenses:Groceries  
+SQ = SeQUential Biofuels  
+SQ_CAT = Expenses:Auto:Fuel  
+```
   
 When using the `ql -a ACCOUNT` option, `ql` will attempt to match the entry  
 with one of the accounts in the [acct] section of .qlrc  
@@ -56,6 +58,8 @@ interactively for an expense category.
 #### Examples
 Everyone loves examples. The above .qlrc file is assumed for the examples.  
 `ql -m SD -t 27.50` will append the following to /home/robotmachine/doc/Ledger.dat  
-> 2014-11-01 * Sundance Natural Foods  
-> 	Expenses:Groceries		$27.50  
-> 	Assets:MyBank:Chequing  
+```
+2014-11-01 * Sundance Natural Foods  
+	Expenses:Groceries		$27.50  
+	Assets:MyBank:Chequing  
+```
