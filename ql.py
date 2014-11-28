@@ -55,9 +55,22 @@ def main():
 	parser.add_argument('--set-acct',
 		action='store_true', dest='set_acct',
 		help="Add accounts to ql's configuration file.")
+	parser.add_argument('--config',
+		action='store', dest='set_config', default=None,
+		help='Specify alternate config file.')
 	args = parser.parse_args()
 	if args.set_acct:
 		set_account()
+
+	global set_config
+	if args.set_config is not None:
+		try:
+			set_config = os.path.expanduser(args.set_config)
+		except:
+			set_config = set_config
+	else:
+		set_config = None
+
 	category = args.category
 	if args.expense:
 		category = str('Expenses:'+args.expense)
@@ -74,6 +87,7 @@ def read_config(ledger_file, account, merchant, category, amount):
 	ql reads from it. If there is no settings file and no file was specified, then
 	we move to set up the config file.	
 	"""
+	print(set_config)
 	if os.path.exists(settings):
 		config.read(settings)
 		if ledger_file is None:
