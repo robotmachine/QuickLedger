@@ -97,8 +97,11 @@ def read_config(ledger_file, account, merchant, category, amount):
 				merchant = config['merc'][merchant]
 			except:
 				merchant = merchant	
-
+		ledger_user = os.path.expanduser(ledger_file)
 		if os.path.isfile(ledger_file):
+			datesel(ledger_file, account, merchant, category, amount)
+		elif os.path.expanduser(ledger_user):
+			ledger_file = ledger_user
 			datesel(ledger_file, account, merchant, category, amount)
 		else:
 			print("Error! Cannot find %s" % ledger_file)
