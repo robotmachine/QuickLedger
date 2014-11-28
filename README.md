@@ -8,27 +8,27 @@ Clone the repository, `chmod +x ql.py` and move ql.py somewhere in your $PATH.
 The first time you run `ql` it will try to figure out where your Ledger data  
 file is located based on `$LEDGER` and `$LEDGER_FILE` environment variables.  
 If nothing is found, it will just ask you.  
-<p>  
-> usage: ql [-h] [-f LEDGER_FILE] [-a ACCOUNT] [-m MERCHANT] [-c CATEGORY] [-e EXPENSE] [-t AMOUNT] [--set-acct]
->   
-> ql: Quick `ledger' entry creation tool.  
->   
-> optional arguments:  
->   -h, --help            show this help message and exit  
->   -f LEDGER_FILE, --file LEDGER_FILE  
->                         Specify Ledger file.  
->   -a ACCOUNT, --account ACCOUNT  
->                         Specify account from ql's configuration file.  
->   -m MERCHANT, --merchant MERCHANT  
->                         Set merchant.  
->   -c CATEGORY, --category CATEGORY  
->                         Set category.  
->   -e EXPENSE, --expense EXPENSE  
->                         Set expense category.  
->   -t AMOUNT, --amount AMOUNT  
->                         Set dollar amount.  
->   --set-acct            Add accounts to ql's configuration file.  
-</p>  
+```  
+usage: ql [-h] [-f LEDGER_FILE] [-a ACCOUNT] [-m MERCHANT] [-c CATEGORY] [-e EXPENSE] [-t AMOUNT] [--set-acct]
+  
+ql: Quick `ledger' entry creation tool.  
+  
+optional arguments:  
+  -h, --help            show this help message and exit  
+  -f LEDGER_FILE, --file LEDGER_FILE  
+                        Specify Ledger file.  
+  -a ACCOUNT, --account ACCOUNT  
+                        Specify account from ql's configuration file.  
+  -m MERCHANT, --merchant MERCHANT  
+                        Set merchant.  
+  -c CATEGORY, --category CATEGORY  
+                        Set category.  
+  -e EXPENSE, --expense EXPENSE  
+                        Set expense category.  
+  -t AMOUNT, --amount AMOUNT  
+                        Set dollar amount.  
+  --set-acct            Add accounts to ql's configuration file.  
+```  
 #### Configuration File  
 `ql` keeps all data in `$HOME/.qlrc`  
 Here is a sample of what one might look like:  
