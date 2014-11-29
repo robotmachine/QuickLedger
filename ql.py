@@ -52,6 +52,9 @@ def main():
 	parser.add_argument('-t', '--amount',
 		action='store', dest='amount', default=None,
 		help='Set dollar amount.')
+	parser.add_argument('-x', '--not-cleared',
+		action='store_true', dest='set_acct',
+		help="Marks transaction as not cleared.")
 	parser.add_argument('--set-acct',
 		action='store_true', dest='set_acct',
 		help="Add accounts to ql's configuration file.")
@@ -87,40 +90,42 @@ def read_config(ledger_file, account, merchant, category, amount):
 	ql reads from it. If there is no settings file and no file was specified, then
 	we move to set up the config file.	
 	"""
-	print(set_config)
-	if os.path.exists(settings):
+	if set_config is not None:
+		if os.path.exists(set_config):
+			config.read(set_config)
+	elif os.path.exists(settings):
 		config.read(settings)
-		if ledger_file is None:
-			try:
-				ledger_file = config['file']['ledger_file']
-			except:
-				ledger_file = None
-		if account is None:
-			try:
-				account = config['acct']['default_account']
-			except:
-				account = None
-		if account is not None:
-			try:
-				account = config['acct'][account]
-			except:
-					account = account
-		if merchant is not None:
-			try:
-				category = config['merc'][merchant+'_CAT']
-				merchant = config['merc'][merchant]
-			except:
-				merchant = merchant	
-		ledger_user = os.path.expanduser(ledger_file)
-		if os.path.isfile(ledger_file):
-			datesel(ledger_file, account, merchant, category, amount)
-		elif os.path.expanduser(ledger_user):
-			ledger_file = ledger_user
-			datesel(ledger_file, account, merchant, category, amount)
-		else:
-			print("Error! Cannot find %s" % ledger_file)
 	else:
 		set_config(account, merchant, category, amount)
+	if ledger_file is None:
+		try:
+			ledger_file = config['file']['ledger_file']
+		except:
+			ledger_file = None
+	if account is None:
+		try:
+			account = config['acct']['default_account']
+		except:
+			account = None
+	if account is not None:
+		try:
+			account = config['acct'][account]
+		except:
+				account = account
+	if merchant is not None:
+		try:
+			category = config['merc'][merchant+'_CAT']
+			merchant = config['merc'][merchant]
+		except:
+			merchant = merchant	
+	ledger_user = os.path.expanduser(ledger_file)
+	if os.path.isfile(ledger_file):
+		datesel(ledger_file, account, merchant, category, amount)
+	elif os.path.expanduser(ledger_user):
+		ledger_file = ledger_user
+		datesel(ledger_file, account, merchant, category, amount)
+	else:
+		print("Error! Cannot find %s" % ledger_file)
 
 def set_config(account, merchant, category, amount):
 	"""
