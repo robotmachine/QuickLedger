@@ -55,9 +55,9 @@ def main():
 	parser.add_argument('-x', '--not-cleared',
 		action='store_true', dest='uncleared',
 		help="Marks transaction as not cleared.")
-	parser.add_argument('--set-acct',
-		action='store_true', dest='set_acct',
-		help="Add accounts to ql's configuration file.")
+	parser.add_argument('--setup',
+		action='store_true', dest='setup',
+		help='Set up accounts and merchants in config file.')
 	parser.add_argument('--config',
 		action='store', dest='set_config', default=None,
 		help='Specify alternate config file.')
@@ -68,8 +68,9 @@ def main():
 		clrstat = "!"
 	else:
 		clrstat = "*"
-	if args.set_acct:
-		set_account()
+
+	if args.setup:
+		setup()
 
 	global set_config
 	if args.set_config is not None:
@@ -187,7 +188,32 @@ def set_config(account, merchant, category, amount):
 			config.write(configfile)
 		read_config(led_file, account, merchant, category, amount)
 
-def set_account():
+def setup():
+	query = input("Would you like to add an account to the ql config file? [Y/n] ")
+	try:
+		boolquery = distutils.util.strtobool(query)
+	except:
+		print("Must enter yes or no.")
+		setup()
+	if boolquery == True:
+		accounts()
+	else:
+		query = input("Would you like to add merchants to the ql config file? [Y/n] ")
+		try:
+			boolquery = distutils.util.strtobool(query)
+		except:
+			print("Must enter yes or no.")
+			setup()
+		if boolquery == True:
+			merchants()
+		else:
+			quit()
+
+def accounts():
+	print("You are a star.")
+	quit()
+
+def merchants():
 	print("You are a star.")
 	quit()
 
