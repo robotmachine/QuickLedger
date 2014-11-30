@@ -53,7 +53,7 @@ def main():
 		action='store', dest='amount', default=None,
 		help='Set dollar amount.')
 	parser.add_argument('-x', '--not-cleared',
-		action='store_true', dest='set_acct',
+		action='store_true', dest='uncleared',
 		help="Marks transaction as not cleared.")
 	parser.add_argument('--set-acct',
 		action='store_true', dest='set_acct',
@@ -62,6 +62,12 @@ def main():
 		action='store', dest='set_config', default=None,
 		help='Specify alternate config file.')
 	args = parser.parse_args()
+
+	global clrstat
+	if args.uncleared:
+		clrstat = "!"
+	else:
+		clrstat = "*"
 	if args.set_acct:
 		set_account()
 
@@ -243,7 +249,7 @@ def amountsel(ledger_file, tdate, merchant, category, amount, account):
 	printer(ledger_file, tdate, merchant, category, account, amount)
 
 def printer(ledger_file, tdate, merchant, category, account, amount):
-	ledger_entry = tdate+" * "+merchant+"\n\t"+category+"\t\t$"+amount+"\n\t"+account+"\n"
+	ledger_entry = tdate+" "+clrstat+" "+merchant+"\n\t"+category+"\t\t$"+amount+"\n\t"+account+"\n"
 	try:
 		with open(ledger_file, "a") as ledger_write:
 			ledger_write.write(ledger_entry)
