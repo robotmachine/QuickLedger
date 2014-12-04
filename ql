@@ -60,9 +60,12 @@ def main():
 	parser.add_argument('-x', '--not-cleared',
 		action='store_true', dest='uncleared',
 		help="Marks transaction as not cleared.")
-	parser.add_argument('--setup',
-		action='store_true', dest='setup',
-		help='Set up accounts and merchants in config file.')
+	parser.add_argument('--setup-accounts',
+		action='store_true', dest='setacct',
+		help='Set up accounts in config file.')
+	parser.add_argument('--setup-merchants',
+		action='store_true', dest='setmerch',
+		help='Set up accounts in config file.')
 	parser.add_argument('--config',
 		action='store', dest='alt_config', default=None,
 		help='Specify alternate config file.')
@@ -97,8 +100,10 @@ def main():
 	amount = args.amount
 	account = args.account
 	merchant = args.merchant
-	if args.setup:
-		setup()
+	if args.setacct:
+		accounts()
+	elif args.setmerch:
+		merchants()
 	read_config(ledger_file, account, merchant, category, amount)
 
 def read_config(ledger_file, account, merchant, category, amount):
