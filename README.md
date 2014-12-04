@@ -2,7 +2,7 @@
 ### Quick entry creation tool for [Ledger](http://ledger-cli.org/ "Ledger").  
 
 #### Install
-Clone the repository, `chmod +x ql.py` and move ql.py somewhere in your $PATH.  
+Clone the repository, `chmod +x ql` and move ql somewhere in your $PATH.  
   
 #### Usage
 The first time you run `ql` it will try to figure out where your Ledger data  
