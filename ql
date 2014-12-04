@@ -198,17 +198,6 @@ def set_config(account, merchant, category, amount):
 			config.write(configfile)
 		read_config(led_file, account, merchant, category, amount)
 
-def setup():
-	boolquery = bool_tool("\nWould you like to add an account to the ql config file? [y/N] ")
-	if boolquery == True:
-		accounts()
-	else:
-		boolquery = bool_tool("Would you like to add merchants to the ql config file? [y/N] ")
-		if boolquery == True:
-			merchants()
-		else:
-			quit()
-
 def accounts():
 	shortname = query_tool('\nEnter a short name for the account: ')
 	acctname = 'Assets:'+query_tool('\nEnter the account name:  Assets:')
