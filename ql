@@ -199,6 +199,7 @@ def set_config(account, merchant, category, amount):
 		read_config(led_file, account, merchant, category, amount)
 
 def accounts():
+
 	shortname = query_tool('\nEnter a short name for the account: ')
 	acctname = 'Assets:'+query_tool('\nEnter the account name:  Assets:')
 	fullacct = shortname+" = "+acctname
