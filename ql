@@ -53,7 +53,7 @@ def main():
 		help='Set category.')
 	parser.add_argument('-e', '--expense',
 		action='store', dest='expense', default=None,
-		help='Set expense category.')
+		help='Set category. Automatically adds Expenses:')
 	parser.add_argument('-t', '--amount',
 		action='store', dest='amount', default=None,
 		help='Set dollar amount.')
@@ -234,7 +234,25 @@ def accounts():
 	quit()
 
 def merchants():
-	print("You are a star.")
+
+	nickname = query_tool('\nEnter a short name for the merchant: ')
+	merchname = query_tool('\nEnter the full merchant name: ')
+	merchentry = nickname+" = "+merchname
+	boolquery = bool_tool("\nWould you like to enter a default category for this merchant? [y/N] ")
+	if boolquery == True:
+		nickcat = nickname+"_CAT"
+		merchcat = query_tool("\nEnter a default category for "+merchname+": ")
+
+	if os.path.exists(settings):
+		config.read(settings)
+	else:
+		print('No .qlrc file found. Creating ~/.qlrc')
+
+	config.set('merc',nickname,merchname)
+	if merchcat:
+		config.set('merc',nickcat,merchcat)
+	with open(settings, 'w') as configfile:
+		config.write(configfile)
 	quit()
 
 def datesel(ledger_file, account, merchant, category, amount):
