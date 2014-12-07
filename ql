@@ -59,7 +59,10 @@ def main():
 		help='Set dollar amount.')
 	parser.add_argument('-x', '--not-cleared',
 		action='store_true', dest='uncleared',
-		help="Marks transaction as not cleared.")
+		help='Marks transaction as not cleared.')
+	parser.add_argument('--list',
+		action='store_true', dest='listit',
+		help='List details from .qlrc')
 	parser.add_argument('--setup-accounts',
 		action='store_true', dest='setacct',
 		help='Set up accounts in config file.')
@@ -100,7 +103,9 @@ def main():
 	amount = args.amount
 	account = args.account
 	merchant = args.merchant
-	if args.setacct:
+	if args.listit:
+		listit()
+	elif args.setacct:
 		accounts()
 	elif args.setmerch:
 		merchants()
@@ -253,6 +258,28 @@ def merchants():
 		config.set('merc',nickcat,merchcat)
 	with open(settings, 'w') as configfile:
 		config.write(configfile)
+	quit()
+
+def listit():
+	if os.path.exists(settings):
+		config.read(settings)
+	else:
+		print("No config file found. Run some kind of setup.")
+	try:
+		print("\nMerchants\n")
+		for conffile in config['merc']:
+			print(conffile+"\t = "+config['merc'][conffile])
+	except:
+		print("\nNo merchants found.\n")
+	try:
+		print("\nAccounts\n")
+		for conffile in config['acct']:
+			if conffile == "default_account":
+				defaultacct = config['acct'][default_account]
+			print(conffile+"\t = "+config['acct'][conffile])
+		print("Default Account is "+defaultacct)
+	except:
+		print("\nNo accounts found.\n")
 	quit()
 
 def datesel(ledger_file, account, merchant, category, amount):
