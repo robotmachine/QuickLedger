@@ -271,13 +271,12 @@ def listit():
 			print(conffile+"\t = "+config['merc'][conffile])
 	except:
 		print("\nNo merchants found.\n")
+	print("\nAccounts\n")
 	try:
-		print("\nAccounts\n")
+		print(config['acct']['default_account']+' is the default account.\n')
 		for conffile in config['acct']:
-			if conffile == "default_account":
-				defaultacct = config['acct'][default_account]
-			print(conffile+"\t = "+config['acct'][conffile])
-		print("Default Account is "+defaultacct)
+			if conffile != "default_account":
+				print(conffile+"\t = "+config['acct'][conffile])
 	except:
 		print("\nNo accounts found.\n")
 	quit()
