@@ -53,10 +53,13 @@ def main():
 		help='Set category.')
 	parser.add_argument('-e', '--expense',
 		action='store', dest='expense', default=None,
-		help='Set category. Automatically adds Expenses:')
+		help='Set category. Automatically prepends Expenses:')
 	parser.add_argument('-t', '--amount',
 		action='store', dest='amount', default=None,
 		help='Set dollar amount.')
+	parser.add_argument('-s', '--split',
+		action='store_true', dest='split', default=False,
+		help='Split payment.',)
 	parser.add_argument('-x', '--not-cleared',
 		action='store_true', dest='uncleared',
 		help='Marks transaction as not cleared.')
@@ -103,12 +106,17 @@ def main():
 	amount = args.amount
 	account = args.account
 	merchant = args.merchant
+
+	global split
+	split = args.split
+
 	if args.listit:
 		listit()
 	elif args.setacct:
 		accounts()
 	elif args.setmerch:
 		merchants()
+
 	read_config(ledger_file, account, merchant, category, amount)
 
 def read_config(ledger_file, account, merchant, category, amount):

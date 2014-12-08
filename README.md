@@ -6,29 +6,35 @@ Clone the repository, `chmod +x ql` and move ql somewhere in your $PATH.
   
 #### Usage
 The first time you run `ql` it will try to figure out where your Ledger data  
-file is located based on `$LEDGER` and `$LEDGER_FILE` environment variables.  
-If nothing is found, it will just ask you.  
+file is located based on `$LEDGER` and `$LEDGER_FILE` environment variables   
+and store this in a ~/.qlrc file. If nothing is found, it will just ask you.  
 ```
-usage: ql [-h] [-f LEDGER_FILE] [-a ACCOUNT] [-m MERCHANT] [-c CATEGORY] 
-             [-e EXPENSE] [-t AMOUNT] [--set-acct]
-  
-ql: Quick `ledger' entry creation tool.  
-  
-optional arguments:  
-  -h, --help            show this help message and exit  
-  -f LEDGER_FILE, --file LEDGER_FILE  
-                        Specify Ledger file.  
-  -a ACCOUNT, --account ACCOUNT  
-                        Specify account from ql's configuration file.  
-  -m MERCHANT, --merchant MERCHANT  
-                        Set merchant.  
-  -c CATEGORY, --category CATEGORY  
-                        Set category.  
-  -e EXPENSE, --expense EXPENSE  
-                        Set expense category.  
-  -t AMOUNT, --amount AMOUNT  
-                        Set dollar amount.  
-  --set-acct            Add accounts to ql's configuration file.  
+usage: ql [-h] [-f LEDGER_FILE] [-a ACCOUNT] [-m MERCHANT] [-c CATEGORY]
+          [-e EXPENSE] [-t AMOUNT] [-s] [-x] [--list] [--setup-accounts]
+          [--setup-merchants] [--config ALT_CONFIG]
+
+ql: Quick `ledger' entry creation tool.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f LEDGER_FILE, --file LEDGER_FILE
+                        Specify Ledger file.
+  -a ACCOUNT, --account ACCOUNT
+                        Specify account from ql's configuration file.
+  -m MERCHANT, --merchant MERCHANT
+                        Set merchant.
+  -c CATEGORY, --category CATEGORY
+                        Set category.
+  -e EXPENSE, --expense EXPENSE
+                        Set category. Automatically prepends Expenses:
+  -t AMOUNT, --amount AMOUNT
+                        Set dollar amount.
+  -s, --split           Split payment.
+  -x, --not-cleared     Marks transaction as not cleared.
+  --list                List details from .qlrc
+  --setup-accounts      Set up accounts in config file.
+  --setup-merchants     Set up accounts in config file.
+  --config ALT_CONFIG   Specify alternate config file.
 ```
   
 #### Configuration File  
