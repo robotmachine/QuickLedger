@@ -255,6 +255,8 @@ def merchants():
 	if boolquery == True:
 		nickcat = nickname+"_CAT"
 		merchcat = query_tool("\nEnter a default category for "+merchname+": ")
+	else:
+		merchcat = False
 
 	if os.path.exists(settings):
 		config.read(settings)
