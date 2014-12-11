@@ -318,17 +318,35 @@ def merchsel(ledger_file, account, merchant, category, amount, tdate):
 	amountsel(ledger_file, tdate, merchant, category, amount, account)
 
 def amountsel(ledger_file, tdate, merchant, category, amount, account):
-	if amount is None:
-		amount_dec = Decimal(query_tool('Amount: $')).quantize(Decimal('1.00'))
-	elif amount is not None:
-		try:
-			amount_dec = Decimal(amount).quantize(Decimal('1.00'))
-		except:
-			print('Amount must be a number.')
-			amount = None
-			amountsel(ledger_file, tdate, merchant, category, amount, account)
-	amount = str(amount_dec)
-	printer(ledger_file, tdate, merchant, category, account, amount)
+	if split is False:
+		if amount is None:
+			amount_dec = Decimal(query_tool('Amount: $')).quantize(Decimal('1.00'))
+		elif amount is not None:
+			try:
+				amount_dec = Decimal(amount).quantize(Decimal('1.00'))
+			except:
+				print('Amount must be a number.')
+				amount = None
+				amountsel(ledger_file, tdate, merchant, category, amount, account)
+		amount = str(amount_dec)
+		printer(ledger_file, tdate, merchant, category, account, amount)
+	else:
+		amountcap = 1
+		if amount is None:
+			total = dollar_tool("Enter the total dollar amount for the entry: ")
+		else:
+			total = amount
+		print('Total is '+total)
+
+		while amountcap is not 0:
+			try:
+				amount = Decimal(query_tool('Amount: $')).quantize(Decimal('1.00'))
+			except:
+				print
+			print(amountcap)
+			amountcap = amountcap - 1
+		quit()
+			
 
 def printer(ledger_file, tdate, merchant, category, account, amount):
 	ledger_entry = tdate+" "+clrstat+" "+merchant+"\n\t"+category+"\t\t$"+amount+"\n\t"+account+"\n"
@@ -363,4 +381,16 @@ def bool_tool(query):
 	except:
 		result = False
 		return result
+
+def dollar_tool(query):
+	user_entry = query_tool(query)
+	try:
+		result = Decimal(int(user_entry)).quantize(Decimal('1.00'))
+		return result
+	except KeyboardInterrupt:
+		user_exit()
+	except:
+		print('\nSyntax error.')
+		quit()
+
 main()
