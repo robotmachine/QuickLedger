@@ -80,9 +80,9 @@ def main():
 
 	global clrstat
 	if args.uncleared:
-		clrstat = "!"
+		clrstat = str("!")
 	else:
-		clrstat = "*"
+		clrstat = str("*")
 
 	global settings
 	if args.alt_config is not None:
@@ -102,8 +102,8 @@ def main():
 
 	category = args.category
 	if args.expense:
-		category = str('Expenses:'+args.expense)
-	ledger_file = args.ledger_file
+		category = str('Expenses:'+str(args.expense))
+	ledger_file = str(args.ledger_file)
 	amount = args.amount
 	account = args.account
 	merchant = args.merchant
@@ -117,7 +117,6 @@ def main():
 		accounts()
 	elif args.setmerch:
 		merchants()
-
 	read_config(ledger_file, account, merchant, category, amount)
 
 def read_config(ledger_file, account, merchant, category, amount):
@@ -147,7 +146,7 @@ def read_config(ledger_file, account, merchant, category, amount):
 		try:
 			account = config['acct'][account]
 		except:
-				account = account
+			account = account
 	if merchant is not None:
 		try:
 			category = config['merc'][merchant+'_CAT']
@@ -307,62 +306,56 @@ def merchsel(ledger_file, account, merchant, category, amount, tdate):
 		merchant = str(merchant)
 
 	if category is None:
-		category = str("Expenses:")+str(query_tool("Expense category:\n\tExpenses:"))
+		catlist = ['str("Expenses:")+str(query_tool("Expense category:\n\tExpenses:"))']
 	else:
-		category = str(category)
+		catlist = ['str(category)']
 
 	if account is None:
 		account = str("Assets:")+str(query_tool("Account:\n\tAssets:"))
 	else:
 		account = str(account)
 
-	amountsel(ledger_file, tdate, merchant, category, amount, account)
+	amountsel(ledger_file, tdate, merchant, catlist, amount, account)
 
-def amountsel(ledger_file, tdate, merchant, category, amount, account):
+def amountsel(ledger_file, tdate, merchant, catlist, amount, account):
 	if split is False:
 		if amount is None:
-			amount_dec = Decimal(query_tool('Amount: $')).quantize(Decimal('1.00'))
+			amount_dec = dollar_tool(query_tool('Amount: $'))
 		elif amount is not None:
-			try:
-				amount_dec = Decimal(amount).quantize(Decimal('1.00'))
-			except:
-				print('Amount must be a number.')
-				amount = None
-				amountsel(ledger_file, tdate, merchant, category, amount, account)
-		amount = str(amount_dec)
-		printer(ledger_file, tdate, merchant, category, account, amount)
+			amount_dec = dollar_tool(amount)
+		amlist = [str(amount_dec)]
+		printer(ledger_file, tdate, merchant, catlist, account, amlist)
 	else:
 		if amount is None:
 			total = dollar_tool(query_tool('Total dollar amount for the entry: $'))
 		else:
-			try:
-				total = Decimal(amount).quantize(Decimal('1.00'))
-				print("Total is $",total)
-			except:
-				print('Must be a number.')
-				amount = None
-				amountsel(ledger_file, tdate, merchant, category, amount, account)
+			total = dollar_tool(amount)
+			print("Total is $",total)
 		latot = total
 		counter = 0
-		splitlist = []
+		amlist = []
+		catlist = []
 		while latot is not None:
 			counter = counter + 1
 			splitamount = dollar_tool(query_tool('\nEnter amount for split number %i: $' % counter))
 			splitcat = query_tool('\nEnter category for split number %i: ' % counter)
-			splitlist.append(splitamount)
-			splitlist.append(splitcat)
+			amlist.append(splitamount)
+			catlist.append(str(splitcat))
 			latot = latot - splitamount
 			if latot == 0.00:
 				latot = None
 			elif latot < 0.00:
 				print("Transaction doesn't balance.")
-				splitlist = []
+				amlist = []
+				catlist = []
 				amount = total
 				amountsel(ledger_file, tdate, merchant, category, amount, account)
 			else:
 				print('\n$%.2f remaining.' % latot)
-		for amt, cat in amount_printer(splitlist):
-			print("Category: ",cat," Amount: ",amt)
+		counter = counter - 1
+		while counter >= 0:
+			print('\t'+str(catlist[counter])+"\t\t"+str(amlist[counter]))
+			counter = counter - 1
 		quit()
 
 def printer(ledger_file, tdate, merchant, category, account, amount):
@@ -375,11 +368,6 @@ def printer(ledger_file, tdate, merchant, category, account, amount):
 	except PermissionError:
 		print("Cannot write to %s. Permission error!" % ledger_file)
 	quit()
-
-def amount_printer(iterable):
-	a, b = tee(iterable)
-	next(b, None)
-	return zip(a, b)
 
 def user_exit():
 	print("\nUser exited.")
@@ -405,9 +393,6 @@ def bool_tool(query):
 		return result
 
 def dollar_tool(query):
-	"""
-	user_entry = query_tool(query)
-	"""
 	try:
 		result = Decimal(query).quantize(Decimal('1.00'))
 	except KeyboardInterrupt:
