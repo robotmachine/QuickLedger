@@ -331,20 +331,45 @@ def amountsel(ledger_file, tdate, merchant, category, amount, account):
 		amount = str(amount_dec)
 		printer(ledger_file, tdate, merchant, category, account, amount)
 	else:
-		amountcap = 1
 		if amount is None:
-			total = dollar_tool("Enter the total dollar amount for the entry: ")
-		else:
-			total = amount
-		print('Total is '+total)
-
-		while amountcap is not 0:
+			total = dollar_tool('Total dollar amount for the entry: $')
+			"""
 			try:
-				amount = Decimal(query_tool('Amount: $')).quantize(Decimal('1.00'))
+				total = dollar_tool('Total dollar amount for the entry: $')
+				total = Decimal(query_tool('Total dollar amount for the entry: $')).quantize(Decimal('1.00'))
 			except:
-				print
-			print(amountcap)
-			amountcap = amountcap - 1
+				print('Must be a number.')
+				amount = None
+				amountsel(ledger_file, tdate, merchant, category, amount, account)
+			"""
+		else:
+			try:
+				total = Decimal(amount).quantize(Decimal('1.00'))
+				print("Total is $",total)
+			except:
+				print('Must be a number.')
+				amount = None
+				amountsel(ledger_file, tdate, merchant, category, amount, account)
+		tcount = total
+		amlist = []
+		while tcount is not None:
+			try:
+				splitamount = Decimal(query_tool('\nAmount: $')).quantize(Decimal('1.00'))
+			except:
+				print('Must be a number.')
+				quit()
+			amlist.append(splitamount)
+			tcount = tcount - splitamount
+			if tcount == 0.00:
+				tcount = None
+			elif tcount < 0.00:
+				print("Transaction doesn't balance.")
+				amlist = []
+				amount = total
+				amountsel(ledger_file, tdate, merchant, category, amount, account)
+			print('$%.2f remaining.' % tcount)
+		for transaction in amlist:
+			print(transaction)
 		quit()
 			
 
@@ -385,12 +410,16 @@ def bool_tool(query):
 def dollar_tool(query):
 	user_entry = query_tool(query)
 	try:
-		result = Decimal(int(user_entry)).quantize(Decimal('1.00'))
+		result = Decimal(user_entry).quantize(Decimal('1.00'))
 		return result
 	except KeyboardInterrupt:
 		user_exit()
+	except InvalidOperation:
+		print('\nMust be a number.')
+		user_entry = None
+		dollar_tool(query)
 	except:
 		print('\nSyntax error.')
-		quit()
-
+		user_entry = None
+		dollar_tool(query)
 main()
