@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os, sys, textwrap, datetime, argparse, configparser, distutils.util
 from decimal import *
+from itertools import tee
 
 """ Settings are stored in .qlrc in user's home folder. """
 global settings
@@ -341,28 +342,28 @@ def amountsel(ledger_file, tdate, merchant, category, amount, account):
 				print('Must be a number.')
 				amount = None
 				amountsel(ledger_file, tdate, merchant, category, amount, account)
-		tcount = total
-		amlist = []
-		while tcount is not None:
-			try:
-				splitamount = Decimal(query_tool('\nAmount: $')).quantize(Decimal('1.00'))
-			except:
-				print('Must be a number.')
-				quit()
-			amlist.append(splitamount)
-			tcount = tcount - splitamount
-			if tcount == 0.00:
-				tcount = None
-			elif tcount < 0.00:
+		latot = total
+		counter = 0
+		splitlist = []
+		while latot is not None:
+			counter = counter + 1
+			splitamount = dollar_tool(query_tool('\nEnter amount for split number %i: $' % counter))
+			splitcat = query_tool('\nEnter category for split number %i: ' % counter)
+			splitlist.append(splitamount)
+			splitlist.append(splitcat)
+			latot = latot - splitamount
+			if latot == 0.00:
+				latot = None
+			elif latot < 0.00:
 				print("Transaction doesn't balance.")
-				amlist = []
+				splitlist = []
 				amount = total
 				amountsel(ledger_file, tdate, merchant, category, amount, account)
-			print('$%.2f remaining.' % tcount)
-		for transaction in amlist:
-			print(transaction)
+			else:
+				print('\n$%.2f remaining.' % latot)
+		for amt, cat in amount_printer(splitlist):
+			print("Category: ",cat," Amount: ",amt)
 		quit()
-			
 
 def printer(ledger_file, tdate, merchant, category, account, amount):
 	ledger_entry = tdate+" "+clrstat+" "+merchant+"\n\t"+category+"\t\t$"+amount+"\n\t"+account+"\n"
@@ -374,6 +375,11 @@ def printer(ledger_file, tdate, merchant, category, account, amount):
 	except PermissionError:
 		print("Cannot write to %s. Permission error!" % ledger_file)
 	quit()
+
+def amount_printer(iterable):
+	a, b = tee(iterable)
+	next(b, None)
+	return zip(a, b)
 
 def user_exit():
 	print("\nUser exited.")
