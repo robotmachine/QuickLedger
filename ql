@@ -332,16 +332,7 @@ def amountsel(ledger_file, tdate, merchant, category, amount, account):
 		printer(ledger_file, tdate, merchant, category, account, amount)
 	else:
 		if amount is None:
-			total = dollar_tool('Total dollar amount for the entry: $')
-			"""
-			try:
-				total = dollar_tool('Total dollar amount for the entry: $')
-				total = Decimal(query_tool('Total dollar amount for the entry: $')).quantize(Decimal('1.00'))
-			except:
-				print('Must be a number.')
-				amount = None
-				amountsel(ledger_file, tdate, merchant, category, amount, account)
-			"""
+			total = dollar_tool(query_tool('Total dollar amount for the entry: $'))
 		else:
 			try:
 				total = Decimal(amount).quantize(Decimal('1.00'))
@@ -408,18 +399,18 @@ def bool_tool(query):
 		return result
 
 def dollar_tool(query):
+	"""
 	user_entry = query_tool(query)
+	"""
 	try:
-		result = Decimal(user_entry).quantize(Decimal('1.00'))
-		return result
+		result = Decimal(query).quantize(Decimal('1.00'))
 	except KeyboardInterrupt:
 		user_exit()
 	except InvalidOperation:
 		print('\nMust be a number.')
-		user_entry = None
-		dollar_tool(query)
+		quit()
 	except:
 		print('\nSyntax error.')
-		user_entry = None
-		dollar_tool(query)
+		quit()
+	return result
 main()
