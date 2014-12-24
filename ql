@@ -30,7 +30,6 @@ config = configparser.ConfigParser()
 
 def main():
 	parser = argparse.ArgumentParser(description="ql: Quick `ledger' entry creation tool.", prog='ql')
-	args = parser.parse_args()
 	parser.add_argument('-f', '--file',
 		action='store', dest='ledger_file', default=None,
 		help='Specify Ledger file.')
@@ -58,59 +57,43 @@ def main():
 	parser.add_argument('--list',
 		action='store_true', dest='listit',
 		help='List details from .qlrc')
-	parser.add_argument('--setup-accounts',
+	parser.add_argument('--set-acct',
 		action='store_true', dest='setacct',
 		help='Set up accounts in config file.')
-	parser.add_argument('--setup-merchants',
+	parser.add_argument('--set-merch',
 		action='store_true', dest='setmerch',
-		help='Set up accounts in config file.')
+		help='Set up merchants in config file.')
+	parser.add_argument('--set-cat',
+		action='store_true', dest='setcat',
+		help='Set up categories in config file.')
 	parser.add_argument('--config',
 		action='store', dest='alt_config', default=None,
 		help='Specify alternate config file.')
+	args = parser.parse_args()
 	"""
+	Checks if an alternate config file was specified and verifies that it exists if so.
+	If not, then it will check that the default location is there ~/.qlrc
+	If that isn't present, then it will run the setup.
 	"""
-	global clrstat
-	if args.uncleared:
-		clrstat = str("!")
-	else:
-		clrstat = str("*")
-	"""
-	"""
-	global settings
-	setpath = os.path.expanduser("~/.qlrc")
-	if os.path.exists(setpath):
-	settings = setpath
 	global settings
 	if args.alt_config is not None:
-		if '~' in args.alt_config:
-			try:
-				expset = os.path.expanduser(args.alt_config)
-				if os.path.exists(expset):
-					settings = expset
-			except:
-				if os.path.exists(args.alt_config):
-					settings = args.alt_config
+		pathtest = os.path.exists(os.path.expanduser(args.alt_config))
+		if pathtest is False:
+			print('\n%s not found.\n' % args.alt_config)
+			settings = None
 		else:
-			if os.path.exists(args.alt_config):
-				settings = args.alt_config
+			settings = os.path.expanduser(args.alt_config)
 	else:
-		alt_config = None
+		settings = None
+	if settings is None:
+		settest = os.path.exists(os.path.expanduser("~/.qlrc"))
+		if settest is True:
+			settings = os.path.expanduser("~/.qlrc")
+		else:
+			settings = set_config()
+	config.read(settings)
 	"""
-	"""
-	category = args.category
-	if args.expense:
-		category = str('Expenses:'+str(args.expense))
-	"""
-	"""
-	ledger_file = str(args.ledger_file)
-	amount = args.amount
-	account = args.account
-	merchant = args.merchant
-	"""
-	"""
-	global split
-	split = args.split
-	"""
+	Run setup or list if selected.
 	"""
 	if args.listit:
 		listit()
@@ -118,76 +101,177 @@ def main():
 		accounts()
 	elif args.setmerch:
 		merchants()
-	read_config(ledger_file, account, merchant, category, amount)
-
-def read_config(ledger_file, account, merchant, category, amount):
+	elif args.setcat:
+		categories()
+	if args.amount:
+		amount = args.amount
+	split = args.split
 	"""
-	If a settings file is specified on the command line, then just skip to the 
-	actual ledger entry. If not, ql checks for the file. If it is there, then 
-	ql reads from it. If there is no settings file and no file was specified, then
-	we move to set up the config file.	
+	Determine ledger file.
 	"""
-	if os.path.exists(settings):
-		config.read(settings)
+	if args.ledger_file and os.path.exists(os.path.expanduser(args.ledger_file)):
+		ledger_file = os.path.expanduser(args.ledger_file)
 	else:
-		set_config(account, merchant, category, amount)
-
-	if ledger_file is None:
-		try:
-			ledger_file = config['file']['ledger_file']
-		except:
-			ledger_file = None
-	if account is None:
-		try:
-			account = config['acct']['default_account']
-		except:
-			account = None
-	if account is not None:
-		try:
-			account = config['acct'][account]
-		except:
-			account = account
-	if merchant is not None:
-		try:
-			category = config['merc'][merchant+'_CAT']
-			merchant = config['merc'][merchant]
-		except:
-			merchant = merchant	
-	ledger_user = os.path.expanduser(ledger_file)
-	if os.path.isfile(ledger_file):
+		ledger_file = read_config('ledger', None, None)
+	"""
+	Set merchant.
+	"""
+	if args.merchant is None:
+		merchant = read_config('merchant', None, None)
+	else:
+		merchant = read_config('merchant', args.merchant, None)
+	"""
+	Sets category.
+	"""
+	if args.category is None and args.expense is None:
+		category = read_config('category', None, args.merchant)
+	elif args.category is not None and args.expense is None:
+		category = read_config('category', args.category, args.merchant)
+	elif args.expense is not None:
+		expcat = str('Expenses:'+str(args.expense))
+		category = read_config('category', expcat, args.merchant)
+	else:
 		None
-	elif os.path.expanduser(ledger_user):
-		ledger_file = ledger_user
+	"""
+	Set amount.
+	"""
+	amlist = []
+	catlist = []
+	if args.amount is None and split is False:
+		amount = dollar_tool(query_tool('Amount: $'))
+	elif args.amount is not None and split is False:
+		amount = dollar_tool(args.amount)
+	elif args.amount is None and split is True:
+		counter, amlist, catlist = splitter(None)
+		while counter >= 0:
+			print('\t'+str(catlist[counter])+'\t\t'+str(amlist[counter]))
+			counter = counter - 1
 	else:
-		print("Error! Cannot find %s" % ledger_file)
-		quit()
-	datesel(ledger_file, account, merchant, category, amount)
+		counter, amlist, catlist = splitter(dollar_tool(args.amount))
+		while counter >= 0:
+			print('\t'+str(catlist[counter])+'\t\t'+str(amlist[counter]))
+			counter = counter - 1
+	"""
+	Set account.
+	"""
+	if args.account is None:
+		account = read_config('account', None, None)
+	else:
+		account = read_config('account', args.account, None)
+	"""
+	Set date.
+	See https://github.com/robotmachine/ql/issues/26
+	"""
+	date = datesel()
 
-def datesel(ledger_file, account, merchant, category, amount):
+	"""
+	Sets the cleared status based on -x / --not-cleared
+	"""
+	if args.uncleared:
+		clrstat = str("!")
+	else:
+		clrstat = str("*")
+	"""
+	print('\n%s %s %s\n\t%s\t\t$%.2f\n\t%s\n' % (date, clrstat, merchant, category, amount, account))
+	"""
+	quit()
+
+def read_config(query, varone, vartwo):
+	"""
+	"""
+	if query == 'ledger':
+		result = config['file']['ledger_file']
+	elif query == 'account':
+		if varone is None:
+			try:
+				default = config['acct']['default_account']
+				result = config['acct'][default]
+			except:
+				acct_entry = str(query_tool('Account:\n\tAssets:'))
+				try:
+					result = config['acct'][acct_entry]
+				except:
+					result = str('Assets:'+acct_entry)
+		else:
+			try:
+				result = config['acct'][varone]
+			except:
+				result = varone
+	elif query == 'merchant':
+		if varone is None:
+			merchant = str(query_tool('Merchant name:\n\t'))
+			try:
+				result = config['merc'][merchant]
+			except:
+				result = merchant
+		else:
+			try:
+				result = config['merc'][varone]
+			except:
+				result = varone
+	elif query == 'category':
+		try:
+			result = config['cat'][vartwo]
+		except:
+			if varone is None:
+				cat_entry = str(query_tool('Category:\n\tExpenses:'))
+				try:
+					result = config['cat'][cat_entry]
+				except:
+					result = str('Expenses:'+cat_entry)
+			else:
+				try:
+					result = config['cat'][varone]
+				except:
+					result = varone
+	return result
+
+def datesel():
 	tdateraw = []
 	today = datetime.date.today()
 	tdateraw.append(today)
 	tdate = str(tdateraw[0])
-	merchsel(ledger_file, account, merchant, category, amount, tdate)
+	return tdate
 
-def merchsel(ledger_file, account, merchant, category, amount, tdate):
-
-	if merchant is None:
-		merchant = str(query_tool("Merchant name:\n\t"))
+def splitter(amount):
+	if amount is None:
+		total = dollar_tool(query_tool('\nTotal dollar amount for entry: $'))
 	else:
-		merchant = str(merchant)
-
-	if category is None:
-		catlist = ['str("Expenses:")+str(query_tool("Expense category:\n\tExpenses:"))']
-	else:
-		catlist = ['str(category)']
-
-	if account is None:
-		account = str("Assets:")+str(query_tool("Account:\n\tAssets:"))
-	else:
-		account = str(account)
-
-	amountsel(ledger_file, tdate, merchant, catlist, amount, account)
+		total = amount
+		print('\nTotal is $%.2f' % total)
+	latot = total
+	counter = 0
+	amlist = []
+	catlist = []
+	print("Enter '0' for the remainder.")
+	while latot is not None:
+		counter = counter + 1
+		splitamount = dollar_tool(query_tool('\nEnter amount for split number %i:\t$' % counter))
+		cat_entry = query_tool('\nEnter category for split number %i:\tExpenses:' % counter)
+		try:
+			splitcat = read(config('category', None, cat_entry))
+		except:
+			splitcat = str('Expenses:'+cat_entry)
+		if splitamount == 0.00:
+			amlist.append(latot)
+			catlist.append(splitcat)
+			latot = 0.00
+		else:
+			amlist.append(splitamount)
+			catlist.append(splitcat)
+			latot = latot - splitamount
+		if latot == 0.00:
+			latot = None
+		elif latot < 0.00:
+			print('Transaction does not balance.')
+			amlist = []
+			catlist = []
+			amount = total
+			splitter(amount)
+		else:
+			print('\n$%.2f remaining.' % latot)
+	counter = counter - 1
+	return counter, amlist, catlist
 
 def amountsel(ledger_file, tdate, merchant, catlist, amount, account):
 	if split is False:
@@ -278,11 +362,9 @@ def accounts():
 def merchants():
 	nickname = query_tool('\nEnter a short name for the merchant: ')
 	merchname = query_tool('\nEnter the full merchant name: ')
-	merchentry = nickname+" = "+merchname
 	boolquery = bool_tool("\nWould you like to enter a default category for this merchant? [y/N] ")
 	if boolquery == True:
-		nickcat = nickname+"_CAT"
-		merchcat = query_tool("\nEnter a default category for "+merchname+": ")
+		merchcat = query_tool('\nEnter a default category for '+merchname+': ')
 	else:
 		merchcat = False
 
@@ -291,44 +373,88 @@ def merchants():
 	else:
 		print('No .qlrc file found. Creating ~/.qlrc')
 
-	config.set('merc',nickname,merchname)
+	config ['merc'] = {nickname: merchname}
+	try:
+		with open(settings, 'w') as configfile:
+			config.write(configfile)
+			print('Merchant written to %s' % settings)
+	except PermissionError:
+		print('\nERROR:\nUnable to write settings to %s' % settings)
+		quit()
+	except:
+		print('Something went wrong.')
+		quit()
 	if merchcat:
-		config.set('merc',nickcat,merchcat)
-	with open(settings, 'w') as configfile:
-		config.write(configfile)
+		config ['cat'] = {nickname: merchcat}
+		try:
+			with open(settings, 'w') as configfile:
+				config.write(configfile)
+				print('Category written to %s' % settings)
+		except PermissionError:
+			print('\nERROR:\nUnable to write settings to %s' % settings)
+			quit()
+		except:
+			print('Something went wrong.')
+			quit()
 	quit()
 
-def listit():
+def categories():
+	nickname = query_tool('\nEnter a short name for the category: ')
+	catname = query_tool('\nEnter the full category: ')
+
 	if os.path.exists(settings):
 		config.read(settings)
 	else:
-		print("No config file found. Run some kind of setup.")
+		print('No .qlrc file found. Creating ~/.qlrc')
+
+	config ['cat'] = {nickname: catname}
 	try:
-		print("\nMerchants\n")
-		for conffile in config['merc']:
-			print(conffile+"\t = "+config['merc'][conffile])
+		with open(settings, 'w') as configfile:
+			config.write(configfile)
+			print('Settings written to %s' % settings)
+	except PermissionError:
+		print('\nERROR:\nUnable to write settings to %s' % settings)
+		quit()
 	except:
-		print("\nNo merchants found.\n")
-	print("\nAccounts\n")
+		print('Something went wrong.')
+		quit()
+	quit()
+
+def listit():
 	try:
+		config.read(settings)
+	except:
+		print('\nERROR:\nNo config file found. Run some kind of setup.')
+		quit()
+	try:
+		print('\nMerchants\n')
+		for conffile in config['merc']:
+			print(conffile+'\t = '+config['merc'][conffile])
+	except:
+		print('\nNo merchants found in %s.\n' % settings)
+	try:
+		print('\nAccounts')
 		print(config['acct']['default_account']+' is the default account.\n')
 		for conffile in config['acct']:
 			if conffile != "default_account":
 				print(conffile+"\t = "+config['acct'][conffile])
 	except:
-		print("\nNo accounts found.\n")
+		print('\nNo accounts found in %s.\n' % settings)
 	quit()
 
-def set_config(account, merchant, category, amount):
+def set_config():
+	settings = os.path.expanduser('~/.qlrc')
 	"""
 	Checks for both $LEDGER and $LEDGER_FILE environment variables.
 	Sets system_ledger to their value if they exist.
 	"""
 	try:
-		if os.environ['LEDGER']:
+		if os.path.exists(os.path.expanduser(os.environ['LEDGER'])):
 			system_ledger = os.path.expanduser(os.environ['LEDGER'])
-		elif os.environ['LEDGER_FILE']:
+		elif os.path.exists(os.path.expanduser(os.environ['LEDGER_FILE'])):
 			system_ledger = os.path.expanduser(os.environ['LEDGER_FILE'])
+		else:
+			system_ledger = None
 	except:
 		system_ledger = None
 
@@ -336,12 +462,9 @@ def set_config(account, merchant, category, amount):
 	Asks if the above value should be set as the default file for `ql'
 	"""
 	if system_ledger is not None: 
-		print(textwrap.dedent("""
-		Looks like your default ledger file is
-		%s
-		""") % (system_ledger))
+		print("Default Ledger file detected as %s" % system_ledger)
 		boolquery = bool_tool("Use this file for ql? [y/N] ")
-		if boolquery == True:
+		if boolquery is True:
 			led_file = system_ledger
 		else:
 			led_file = None
@@ -353,20 +476,31 @@ def set_config(account, merchant, category, amount):
 	If the file is not found, an error will print.
 	"""
 	if led_file is None:
-		led_input = query_tool('Ledger file location: ')
-		led_file = os.path.expanduser(led_input)	
-		if not os.path.isfile(led_file):
-			print('File not found.')
-			quit()	
+		led_input = query_tool('Enter Ledger file location: ')
+		if os.path.exists(os.path.expanduser(led_input)):
+			led_file = os.path.expanduser(led_input)
+		else:
+			print('\nERROR:\nLedger file not found: %s' % led_input)
+			quit()
 	"""
 	Checks again to make sure the ledger_file actually exists.
 	If it does, then it writes that value to .qlrc in the $HOME folder.
 	"""	
 	if os.path.isfile(led_file):
 		config ['file'] = {'ledger_file': led_file}
-		with open(settings, 'w') as configfile:
-			config.write(configfile)
-		read_config(led_file, account, merchant, category, amount)
+		try:
+			with open(settings, 'w') as configfile:
+				config.write(configfile)
+				print('Settings written to %s' % settings)
+		except PermissionError:
+			print('\nERROR:\nUnable to write settings to %s' % settings)
+			quit()
+		except:
+			print('Something went wrong.')
+			quit()
+	else:
+		print('\nERROR:\nLedger file not found: %s' % led_file)
+	return settings
 
 def user_exit():
 	print("\nUser exited.")
