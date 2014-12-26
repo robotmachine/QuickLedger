@@ -123,34 +123,35 @@ def main():
 	"""
 	Sets category.
 	"""
-	if args.category is None and args.expense is None:
-		category = read_config('category', None, args.merchant)
-	elif args.category is not None and args.expense is None:
-		category = read_config('category', args.category, args.merchant)
-	elif args.expense is not None:
-		expcat = str('Expenses:'+str(args.expense))
-		category = read_config('category', expcat, args.merchant)
-	else:
-		None
+	if split is False:
+		if args.category is None and args.expense is None:
+			category = read_config('category', None, args.merchant)
+		elif args.category is not None and args.expense is None:
+			category = read_config('category', args.category, args.merchant)
+		elif args.expense is not None:
+			expcat = str('Expenses:'+str(args.expense))
+			category = read_config('category', expcat, args.merchant)
+		else:
+			None
 	"""
 	Set amount.
 	"""
-	amlist = []
-	catlist = []
 	if args.amount is None and split is False:
-		amount = dollar_tool(query_tool('Amount: $'))
+		amlist = []
+		catlist = []
+		amlist.append(dollar_tool(query_tool('Amount: $')))
+		catlist.append(str(category))
+		trtotal = amlist[0]
 	elif args.amount is not None and split is False:
-		amount = dollar_tool(args.amount)
+		amlist = []
+		catlist = []
+		amlist.append(dollar_tool(args.amount))
+		catlist.append(str(category))
+		trtotal = amlist[0]
 	elif args.amount is None and split is True:
-		counter, amlist, catlist = splitter(None)
-		while counter >= 0:
-			print('\t'+str(catlist[counter])+'\t\t'+str(amlist[counter]))
-			counter = counter - 1
+		amlist, catlist, trtotal = splitter(None)
 	else:
-		counter, amlist, catlist = splitter(dollar_tool(args.amount))
-		while counter >= 0:
-			print('\t'+str(catlist[counter])+'\t\t'+str(amlist[counter]))
-			counter = counter - 1
+		amlist, catlist, trtotal = splitter(dollar_tool(args.amount))
 	"""
 	Set account.
 	"""
@@ -168,12 +169,13 @@ def main():
 	Sets the cleared status based on -x / --not-cleared
 	"""
 	if args.uncleared:
-		clrstat = str("!")
+		clrstat = str(' ! ')
 	else:
-		clrstat = str("*")
+		clrstat = str(' * ')
 	"""
-	print('\n%s %s %s\n\t%s\t\t$%.2f\n\t%s\n' % (date, clrstat, merchant, category, amount, account))
 	"""
+	ledger_entry = assembly(date, clrstat, merchant, amlist, catlist, account, trtotal)
+	printer(ledger_file, ledger_entry)
 	quit()
 
 def read_config(query, varone, vartwo):
@@ -249,7 +251,7 @@ def splitter(amount):
 		splitamount = dollar_tool(query_tool('\nEnter amount for split number %i:\t$' % counter))
 		cat_entry = query_tool('\nEnter category for split number %i:\tExpenses:' % counter)
 		try:
-			splitcat = read(config('category', None, cat_entry))
+			splitcat = config['cat'][cat_entry]
 		except:
 			splitcat = str('Expenses:'+cat_entry)
 		if splitamount == 0.00:
@@ -271,58 +273,41 @@ def splitter(amount):
 		else:
 			print('\n$%.2f remaining.' % latot)
 	counter = counter - 1
-	return counter, amlist, catlist
+	return amlist, catlist, total
 
-def amountsel(ledger_file, tdate, merchant, catlist, amount, account):
-	if split is False:
-		if amount is None:
-			amount_dec = dollar_tool(query_tool('Amount: $'))
-		elif amount is not None:
-			amount_dec = dollar_tool(amount)
-		amlist = [str(amount_dec)]
-		printer(ledger_file, tdate, merchant, catlist, account, amlist)
-	else:
-		if amount is None:
-			total = dollar_tool(query_tool('Total dollar amount for the entry: $'))
-		else:
-			total = dollar_tool(amount)
-			print("Total is $",total)
-		latot = total
-		counter = 0
-		amlist = []
-		catlist = []
-		while latot is not None:
-			counter = counter + 1
-			splitamount = dollar_tool(query_tool('\nEnter amount for split number %i: $' % counter))
-			splitcat = query_tool('\nEnter category for split number %i: ' % counter)
-			amlist.append(splitamount)
-			catlist.append(str(splitcat))
-			latot = latot - splitamount
-			if latot == 0.00:
-				latot = None
-			elif latot < 0.00:
-				print("Transaction doesn't balance.")
-				amlist = []
-				catlist = []
-				amount = total
-				amountsel(ledger_file, tdate, merchant, category, amount, account)
-			else:
-				print('\n$%.2f remaining.' % latot)
+def assembly(date, clrstat, merchant, amlist, catlist, account, trtotal):
+	ledger_list = []
+	ledger_list.append(date)
+	ledger_list.append(clrstat)
+	ledger_list.append(merchant)
+	ledger_list.append('\n')
+	counter = len(amlist) - 1
+	while counter >= 0:
+		ledger_list.append('\t')
+		ledger_list.append(str(catlist[counter]))
+		ledger_list.append('\t\t$')
+		ledger_list.append(str(amlist[counter]))
+		ledger_list.append('\n')
 		counter = counter - 1
-		while counter >= 0:
-			print('\t'+str(catlist[counter])+"\t\t"+str(amlist[counter]))
-			counter = counter - 1
-		quit()
+	ledger_list.append('\t')
+	ledger_list.append(account)
+	if len(amlist) > 1:
+		ledger_list.append('\t\t$-')
+		ledger_list.append(str(trtotal))
+	ledger_list.append('\n')
+	result = ''.join(ledger_list)
+	return result
 
-def printer(ledger_file, tdate, merchant, category, account, amount):
-	ledger_entry = tdate+" "+clrstat+" "+merchant+"\n\t"+category+"\t\t$"+amount+"\n\t"+account+"\n"
+def printer(ledger_file, ledger_entry):
 	try:
 		with open(ledger_file, "a") as ledger_write:
 			ledger_write.write(ledger_entry)
-			ledger_write.close()
-			print("\n\nWrote entry to "+ledger_file+":\n\n"+ledger_entry)
+			print('\n\nWrote entry to '+ledger_file+':\n'+ledger_entry)
 	except PermissionError:
 		print("Cannot write to %s. Permission error!" % ledger_file)
+	except:
+		print('Something went wrong.')
+		quit()
 	quit()
 
 def accounts():
