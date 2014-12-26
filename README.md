@@ -10,8 +10,8 @@ file is located based on `$LEDGER` and `$LEDGER_FILE` environment variables
 and store this in a ~/.qlrc file. If nothing is found, it will just ask you.  
 ```
 usage: ql [-h] [-f LEDGER_FILE] [-a ACCOUNT] [-m MERCHANT] [-c CATEGORY]
-          [-e EXPENSE] [-t AMOUNT] [-s] [-x] [--list] [--setup-accounts]
-          [--setup-merchants] [--config ALT_CONFIG]
+          [-e EXPENSE] [-t AMOUNT] [-s] [-x] [--list] [--set-acct]
+          [--set-merch] [--set-cat] [--config ALT_CONFIG]
 
 ql: Quick `ledger' entry creation tool.
 
@@ -32,8 +32,9 @@ optional arguments:
   -s, --split           Split payment.
   -x, --not-cleared     Marks transaction as not cleared.
   --list                List details from .qlrc
-  --setup-accounts      Set up accounts in config file.
-  --setup-merchants     Set up accounts in config file.
+  --set-acct            Set up accounts in config file.
+  --set-merch           Set up merchants in config file.
+  --set-cat             Set up categories in config file.
   --config ALT_CONFIG   Specify alternate config file.
 ```
   
