@@ -46,23 +46,28 @@ Here is a sample of what one might look like:
 ```
 [file]  
 ledger_file = /home/robotmachine/doc/Ledger.dat  
-[acct]
+  
+[account]
 default_account = CHEQ 
 CHEQ = Assets:MyBank:Chequing  
 SAVE = Assets:MyBank:Savings  
-[merc]  
+  
+[merchant]  
 SD = Sundance Natural Foods  
-SD_CAT = Expenses:Groceries  
 SQ = SeQUential Biofuels  
-SQ_CAT = Expenses:Auto:Fuel  
+
+[category]
+groc = Expenses:Groceries
+SD = Expenses:Groceries  
+SQ = Expenses:Auto:Fuel  
 ```
   
 When using the `ql -a ACCOUNT` option, `ql` will attempt to match the entry  
-with one of the accounts in the [acct] section of .qlrc  
+with one of the accounts in the [account] section of .qlrc  
 If a match is not found, the literal string will be used.  
 The same is true of the `ql -m MERCHANT` option.  
-If a match is found for the merchant and merchant_CAT is present, then  
-merchant_CAT will be used. If that does not match, then it will prompt  
+If a match is found for the merchant and the same entry is present under [category], then  
+the category will be used. If that does not match, then it will prompt  
 interactively for an expense category.  
 
 #### Examples

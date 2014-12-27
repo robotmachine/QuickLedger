@@ -186,44 +186,44 @@ def read_config(query, varone, vartwo):
 	elif query == 'account':
 		if varone is None:
 			try:
-				default = config['acct']['default_account']
-				result = config['acct'][default]
+				default = config['account']['default_account']
+				result = config['account'][default]
 			except:
 				acct_entry = str(query_tool('Account:\n\tAssets:'))
 				try:
-					result = config['acct'][acct_entry]
+					result = config['account'][acct_entry]
 				except:
 					result = str('Assets:'+acct_entry)
 		else:
 			try:
-				result = config['acct'][varone]
+				result = config['account'][varone]
 			except:
 				result = varone
 	elif query == 'merchant':
 		if varone is None:
 			merchant = str(query_tool('Merchant name:\n\t'))
 			try:
-				result = config['merc'][merchant]
+				result = config['merchant'][merchant]
 			except:
 				result = merchant
 		else:
 			try:
-				result = config['merc'][varone]
+				result = config['merchant'][varone]
 			except:
 				result = varone
 	elif query == 'category':
 		try:
-			result = config['cat'][vartwo]
+			result = config['category'][vartwo]
 		except:
 			if varone is None:
 				cat_entry = str(query_tool('Category:\n\tExpenses:'))
 				try:
-					result = config['cat'][cat_entry]
+					result = config['category'][cat_entry]
 				except:
 					result = str('Expenses:'+cat_entry)
 			else:
 				try:
-					result = config['cat'][varone]
+					result = config['category'][varone]
 				except:
 					result = varone
 	return result
@@ -251,7 +251,7 @@ def splitter(amount):
 		splitamount = dollar_tool(query_tool('\nEnter amount for split number %i:\t$' % counter))
 		cat_entry = query_tool('\nEnter category for split number %i:\tExpenses:' % counter)
 		try:
-			splitcat = config['cat'][cat_entry]
+			splitcat = config['category'][cat_entry]
 		except:
 			splitcat = str('Expenses:'+cat_entry)
 		if splitamount == 0.00:
@@ -320,7 +320,7 @@ def accounts():
 		print('No .qlrc file found. Creating ~/.qlrc')
 
 	try:
-		defaultq = config['acct']['default_account']
+		defaultq = config['account']['default_account']
 	except:
 		defaultq = None
 	if defaultq is None:
@@ -330,16 +330,16 @@ def accounts():
 		else:
 			makedefault = False
 	elif defaultq is not None:
-		defaultqq = config['acct'][defaultq]
+		defaultqq = config['account'][defaultq]
 		boolquery = bool_tool("\nThe current default account is "+defaultqq+"\nWould you like to replace it with this one? [Y/n] ")
 		if boolquery == True:
 			makedefault = True
 		else:
 			makedefault = False
 
-	config.set('acct',shortname,acctname)
+	config.set('account',shortname,acctname)
 	if makedefault == True:
-		config.set('acct','default_account',shortname)
+		config.set('account','default_account',shortname)
 	with open(settings, 'w') as configfile:
 		config.write(configfile)
 	quit()
@@ -358,7 +358,7 @@ def merchants():
 	else:
 		print('No .qlrc file found. Creating ~/.qlrc')
 
-	config ['merc'] = {nickname: merchname}
+	config ['merchant'] = {nickname: merchname}
 	try:
 		with open(settings, 'w') as configfile:
 			config.write(configfile)
@@ -370,7 +370,7 @@ def merchants():
 		print('Something went wrong.')
 		quit()
 	if merchcat:
-		config ['cat'] = {nickname: merchcat}
+		config ['category'] = {nickname: merchcat}
 		try:
 			with open(settings, 'w') as configfile:
 				config.write(configfile)
@@ -392,7 +392,7 @@ def categories():
 	else:
 		print('No .qlrc file found. Creating ~/.qlrc')
 
-	config ['cat'] = {nickname: catname}
+	config ['category'] = {nickname: catname}
 	try:
 		with open(settings, 'w') as configfile:
 			config.write(configfile)
@@ -413,16 +413,16 @@ def listit():
 		quit()
 	try:
 		print('\nMerchants\n')
-		for conffile in config['merc']:
-			print(conffile+'\t = '+config['merc'][conffile])
+		for conffile in config['merchant']:
+			print(conffile+'\t = '+config['merchant'][conffile])
 	except:
 		print('\nNo merchants found in %s.\n' % settings)
 	try:
 		print('\nAccounts')
-		print(config['acct']['default_account']+' is the default account.\n')
-		for conffile in config['acct']:
+		print(config['account']['default_account']+' is the default account.\n')
+		for conffile in config['account']:
 			if conffile != "default_account":
-				print(conffile+"\t = "+config['acct'][conffile])
+				print(conffile+"\t = "+config['account'][conffile])
 	except:
 		print('\nNo accounts found in %s.\n' % settings)
 	quit()
