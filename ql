@@ -182,7 +182,7 @@ def read_config(query, varone, vartwo):
 	"""
 	"""
 	if query == 'ledger':
-		result = config['file']['ledger_file']
+		result = os.path.expanduser(config['file']['ledger_file'])
 	elif query == 'account':
 		if varone is None:
 			try:
@@ -305,8 +305,10 @@ def printer(ledger_file, ledger_entry):
 			print('\n\nWrote entry to '+ledger_file+':\n'+ledger_entry)
 	except PermissionError:
 		print("Cannot write to %s. Permission error!" % ledger_file)
+	except FileNotFoundError:
+		print('Cannot find %s' % ledger_file)
 	except:
-		print('Something went wrong.')
+		print('Something went wrong with the printer.')
 		quit()
 	quit()
 
