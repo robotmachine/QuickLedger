@@ -2,7 +2,9 @@
 ### Quick entry creation tool for [Ledger](http://ledger-cli.org/ "Ledger").  
 
 #### Install
-Clone the repository, `chmod +x ql` and move ql somewhere in your $PATH.  
+1. Download [the archive](https://github.com/robotmachine/ql/tarball/master)
+2. Move `ql` to /usr/local/bin/ or somewhere else in `$PATH`
+3. Run `chmod +x ql`
   
 #### Usage
 The first time you run `ql` it will try to figure out where your Ledger data file is located based on `$LEDGER` and `$LEDGER_FILE` environment variables and store this in a ~/.qlrc file. If nothing is found, it will just ask you.  
