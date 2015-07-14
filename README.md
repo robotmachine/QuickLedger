@@ -3,7 +3,7 @@
 
 #### Install
 1. Download [the archive](https://github.com/robotmachine/ql/tarball/master)
-2. Move `ql` to /usr/local/bin/ or somewhere else in `$PATH`
+2. Move `ql` to `/usr/local/bin/` or somewhere else in `$PATH`
 3. Run `chmod +x ql`
   
 #### Usage
