@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
 """
- =-=-=- ql -=-=-=
- | Quick Ledger |
- |    v.0.7     |
- =-=-=-=-=-=-=-=-
 
-©2014 Brian A. Carter
-robotmachine@gmail.com
-https://github.com/robotmachine/ql
+  ___        _      _    _             _                 
+ / _ \ _   _(_) ___| | _| |    ___  __| | __ _  ___ _ __ 
+| | | | | | | |/ __| |/ / |   / _ \/ _` |/ _` |/ _ \ '__|
+| |_| | |_| | | (__|   <| |__|  __/ (_| | (_| |  __/ |   
+ \__\_\\__,_|_|\___|_|\_\_____\___|\__,_|\__, |\___|_|   
+                                         |___/           
+ v.0.7 
+
+Project Homepage: 	https://robotmachine.github.io/QuickLedger
+Project Source: 	https://github.com/robotmachine/QuickLedger
+
+QuickLedger
+Entry creation utility for https://ledger-cli.org
+(C)2014 Brian A. Carter (robotmachine@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,38 +32,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os, sys, textwrap, datetime, argparse, configparser, distutils.util
 from decimal import *
 
+global qlVer
+qlVer = str("0.7")
+
 global config
 config = configparser.ConfigParser()
 
 def main():
-	parser = argparse.ArgumentParser(description="ql: Quick `ledger' entry creation tool.", prog='ql')
+	parser = argparse.ArgumentParser(description="QuickLedger: Entry creation utility for http://ledger-cli.org", prog='ql')
 	parser.add_argument('-f', '--file',
 		action='store', dest='ledger_file', default=None,
-		help='Specify Ledger file.')
+		help='Specify Ledger data file.')
 	parser.add_argument('-a', '--account',
 		action='store', dest='account', default=None,
-		help="Specify account from ql's configuration file.")
+		help='Specify account.')
 	parser.add_argument('-m', '--merchant',
 		action='store', dest='merchant', default=None,
 		help='Set merchant.')
 	parser.add_argument('-c', '--category',
 		action='store', dest='category', default=None,
-		help='Set category.')
+		help='Set transaction category.')
 	parser.add_argument('-e', '--expense',
 		action='store', dest='expense', default=None,
-		help='Set category. Automatically prepends Expenses:')
+		help="Set expense category. (Prepends 'Expenses:'")
 	parser.add_argument('-t', '--amount',
 		action='store', dest='amount', default=None,
-		help='Set dollar amount.')
+		help='Set transaction amount.')
 	parser.add_argument('-s', '--split',
 		action='store_true', dest='split', default=False,
 		help='Split payment.',)
 	parser.add_argument('-x', '--not-cleared',
 		action='store_true', dest='uncleared',
-		help='Marks transaction as not cleared.')
+		help='Mark transaction as not-cleared/pending.')
 	parser.add_argument('--list',
 		action='store_true', dest='listit',
-		help='List details from .qlrc')
+		help='List settings in config file.')
 	parser.add_argument('--set-acct',
 		action='store_true', dest='setacct',
 		help='Set up accounts in config file.')
@@ -69,7 +79,15 @@ def main():
 	parser.add_argument('--config',
 		action='store', dest='alt_config', default=None,
 		help='Specify alternate config file.')
+	parser.add_argument('-v','--version', default=False,
+		action='store_true', dest='ArgVer',
+		help='Print version.')
 	args = parser.parse_args()
+	"""
+	Check version.
+	"""
+	if args.ArgVer is True:
+		PrintVersion()
 	"""
 	Checks if an alternate config file was specified and verifies that it exists if so.
 	If not, then it will check that the default location is there ~/.qlrc
@@ -524,4 +542,7 @@ def dollar_tool(query):
 		print('\nSyntax error.')
 		quit()
 	return result
+def PrintVersion():
+	print("\nQuickLedger v."+str(qlVer)+"\n\n(C)2014 Brian A. Carter\nrobotmachine@gmail.com\nhttps://robotmachine.github.io/QuickLedger")
+	quit()
 main()

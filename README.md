@@ -1,41 +1,42 @@
-# ql
-### Quick entry creation tool for [Ledger](http://ledger-cli.org/ "Ledger").  
+# QuickLedger
+### Entry creation utility for [Ledger](http://ledger-cli.org/ "Ledger").  
 
 #### Install
-1. Download [the archive](https://github.com/robotmachine/ql/tarball/master)
-2. Move `ql` to `/usr/local/bin/` or somewhere else in `$PATH`
-3. Run `chmod +x ql`
+1. Download [the archive](https://github.com/robotmachine/QuickLedger/tarball/master)
+2. Run `chmod +x ql`
+3. Move `ql` to `/usr/local/bin/` or somewhere else in `$PATH`
   
 #### Usage
 The first time you run `ql` it will try to figure out where your Ledger data file is located based on `$LEDGER` and `$LEDGER_FILE` environment variables and store this in a ~/.qlrc file. If nothing is found, it will just ask you.  
 ```
 usage: ql [-h] [-f LEDGER_FILE] [-a ACCOUNT] [-m MERCHANT] [-c CATEGORY]
           [-e EXPENSE] [-t AMOUNT] [-s] [-x] [--list] [--set-acct]
-          [--set-merch] [--set-cat] [--config ALT_CONFIG]
+          [--set-merch] [--set-cat] [--config ALT_CONFIG] [-v]
 
-ql: Quick `ledger' entry creation tool.
+QuickLedger: Entry creation utility for http://ledger-cli.org
 
 optional arguments:
   -h, --help            show this help message and exit
   -f LEDGER_FILE, --file LEDGER_FILE
-                        Specify Ledger file.
+                        Specify Ledger data file.
   -a ACCOUNT, --account ACCOUNT
-                        Specify account from ql's configuration file.
+                        Specify account.
   -m MERCHANT, --merchant MERCHANT
                         Set merchant.
   -c CATEGORY, --category CATEGORY
-                        Set category.
+                        Set transaction category.
   -e EXPENSE, --expense EXPENSE
-                        Set category. Automatically prepends Expenses:
+                        Set expense category. (Prepends 'Expenses:'
   -t AMOUNT, --amount AMOUNT
-                        Set dollar amount.
+                        Set transaction amount.
   -s, --split           Split payment.
-  -x, --not-cleared     Marks transaction as not cleared.
-  --list                List details from .qlrc
+  -x, --not-cleared     Mark transaction as not-cleared/pending.
+  --list                List settings in config file.
   --set-acct            Set up accounts in config file.
   --set-merch           Set up merchants in config file.
   --set-cat             Set up categories in config file.
   --config ALT_CONFIG   Specify alternate config file.
+  -v, --version         Print version.
 ```
   
 #### Configuration File  
