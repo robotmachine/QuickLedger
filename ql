@@ -303,14 +303,14 @@ def assembly(date, clrstat, merchant, amlist, catlist, account, trtotal):
 	while counter >= 0:
 		ledger_list.append('\t')
 		ledger_list.append(str(catlist[counter]))
-		ledger_list.append('\t\t$')
+		ledger_list.append('\t\t\t$')
 		ledger_list.append(str(amlist[counter]))
 		ledger_list.append('\n')
 		counter = counter - 1
 	ledger_list.append('\t')
 	ledger_list.append(account)
 	if len(amlist) > 1:
-		ledger_list.append('\t\t$-')
+		ledger_list.append('\t\t\t$-')
 		ledger_list.append(str(trtotal))
 	ledger_list.append('\n')
 	result = ''.join(ledger_list)
