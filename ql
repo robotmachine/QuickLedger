@@ -53,10 +53,13 @@ def main():
 		help='Set transaction category.')
 	parser.add_argument('-e', '--expense',
 		action='store', dest='expense', default=None,
-		help="Set expense category. (Prepends 'Expenses:'")
+		help="Set expense category. (Prepends 'Expenses:')")
 	parser.add_argument('-t', '--amount',
 		action='store', dest='amount', default=None,
 		help='Set transaction amount.')
+	parser.add_argument('-y', '--yesterday',
+		action='store', dest='yday', default=1,
+		help='Set relative date. Default is yesterday.')
 	parser.add_argument('-s', '--split',
 		action='store_true', dest='split', default=False,
 		help='Split payment.',)
