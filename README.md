@@ -1,5 +1,5 @@
 # QuickLedger
-### Entry creation utility for [Ledger](http://ledger-cli.org/ "Ledger").  
+### Entry creation utility for [ledger](http://ledger-cli.org/ "ledger").  
 
 #### Install
 1. Download [the archive](https://github.com/robotmachine/QuickLedger/tarball/master)
