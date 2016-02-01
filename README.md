@@ -69,7 +69,7 @@ Amount: $40.21
 Wrote entry to /home/robotmachine/doc/Ledger.dat:
 2016-02-01 * Bob's Groceries
         Expenses:Food:Groceries                 $40.21
-        Assets:OSCU:Brian
+	Assets:MyCreditUnion:Chequing  
  ```
  
 #### Using Arguments
@@ -83,7 +83,7 @@ $> ql -m "Bob's Groceries" -e "Food:Groceries" -t 40.21
 Wrote entry to /home/robotmachine/doc/Ledger.dat:
 2016-02-01 * Bob's Groceries
         Expenses:Food:Groceries                 $40.21
-        Assets:OSCU:Brian
+	Assets:MyCreditUnion:Chequing  
 ```
 #### Using Nicknames
 The above sample .qlrc file is used for the next example.  
