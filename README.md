@@ -1,4 +1,5 @@
 # QuickLedger
+## Version 1.0.0
 ## Entry creation utility for [ledger](http://ledger-cli.org/ "ledger").  
 
 ### Install
