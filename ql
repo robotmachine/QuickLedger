@@ -73,15 +73,6 @@ def main():
 	parser.add_argument('--list',
 		action='store_true', dest='listit',
 		help='List settings in config file.')
-	parser.add_argument('--set-acct',
-		action='store_true', dest='setacct',
-		help='Set up accounts in config file.')
-	parser.add_argument('--set-merch',
-		action='store_true', dest='setmerch',
-		help='Set up merchants in config file.')
-	parser.add_argument('--set-cat',
-		action='store_true', dest='setcat',
-		help='Set up categories in config file.')
 	parser.add_argument('--config',
 		action='store', dest='alt_config', default=None,
 		help='Specify alternate config file.')
@@ -121,15 +112,6 @@ def main():
 	"""
 	if args.listit:
 		listit()
-	elif args.setacct:
-		accounts()
-	elif args.setmerch:
-		merchants()
-	elif args.setcat:
-		categories()
-	if args.amount:
-		amount = args.amount
-	split = args.split
 	"""
 	Determine ledger file.
 	"""
@@ -147,6 +129,7 @@ def main():
 	"""
 	Sets category.
 	"""
+	split = args.split
 	if split is False:
 		if args.category is None and args.expense is None:
 			category = read_config('category', None, args.merchant)
@@ -391,6 +374,7 @@ def accounts():
 		config.write(configfile)
 	quit()
 
+"""
 def merchants():
 	nickname = query_tool('\nEnter a short name for the merchant: ')
 	merchname = query_tool('\nEnter the full merchant name: ')
@@ -451,6 +435,7 @@ def categories():
 		print('Something went wrong.')
 		quit()
 	quit()
+"""
 
 def listit():
 	try:
@@ -569,6 +554,7 @@ def dollar_tool(query):
 		print('\nSyntax error.')
 		quit()
 	return result
+
 def PrintVersion():
 	print("\nQuickLedger v."+str(qlVer)+"\n\n(C)2014-2016 Brian A. Carter\nrobotmachine@gmail.com\nhttps://github.com/robotmachine/QuickLedger")
 	quit()
