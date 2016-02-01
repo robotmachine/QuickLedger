@@ -10,8 +10,8 @@
 The first time you run `ql` it will try to figure out where your Ledger data file is located based on `$LEDGER` and `$LEDGER_FILE` environment variables and store this in a ~/.qlrc file. If nothing is found, it will just ask you.  
 ```
 usage: ql [-h] [-f LEDGER_FILE] [-a ACCOUNT] [-m MERCHANT] [-c CATEGORY]
-          [-e EXPENSE] [-t AMOUNT] [-s] [-x] [--list] [--set-acct]
-          [--set-merch] [--set-cat] [--config ALT_CONFIG] [-v]
+          [-e EXPENSE] [-t AMOUNT] [-r RDATE] [-d DATE] [-s] [-x] [--list]
+          [--set-acct] [--set-merch] [--set-cat] [--config ALT_CONFIG] [-v]
 
 QuickLedger: Entry creation utility for http://ledger-cli.org
 
@@ -26,9 +26,14 @@ optional arguments:
   -c CATEGORY, --category CATEGORY
                         Set transaction category.
   -e EXPENSE, --expense EXPENSE
-                        Set expense category. (Prepends 'Expenses:'
+                        Set expense category. (Prepends 'Expenses:')
   -t AMOUNT, --amount AMOUNT
                         Set transaction amount.
+  -r RDATE, --rdate RDATE
+                        Set number of days ago transaction occurred. Positive
+                        value for days in the past, negative value for days in
+                        the future. Overrides --date.
+  -d DATE, --date DATE  Set date of transaction. Format is YYYY-MM-DD.
   -s, --split           Split payment.
   -x, --not-cleared     Mark transaction as not-cleared/pending.
   --list                List settings in config file.
