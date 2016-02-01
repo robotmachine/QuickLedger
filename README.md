@@ -3,7 +3,7 @@
 ## Entry creation utility for [ledger](http://ledger-cli.org/ "ledger").  
 
 ### Install
-1. Download [the archive](https://github.com/robotmachine/QuickLedger/tarball/master)
+1. Download [the archive](https://github.com/robotmachine/QuickLedger/archive/v1.0.0.tar.gz)
 2. Run `chmod +x ql`
 3. Move `ql` to `/usr/local/bin/` or somewhere else in `$PATH`
   
