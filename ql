@@ -28,8 +28,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import os, sys, textwrap, datetime, argparse, configparser, distutils.util
+import os, sys, datetime, textwrap, argparse, configparser, distutils.util
 from decimal import *
+from datetime import date, timedelta
 
 global qlVer
 qlVer = str("0.7")
@@ -57,9 +58,9 @@ def main():
 	parser.add_argument('-t', '--amount',
 		action='store', dest='amount', default=None,
 		help='Set transaction amount.')
-	parser.add_argument('-y', '--yesterday',
-		action='store', dest='yday', default=1,
-		help='Set relative date. Default is yesterday.')
+	parser.add_argument('-r', '--rdate',
+		action='store', dest='rdate', default=None,
+		help='Set number of days ago transaction occurred. Overrides --date.')
 	parser.add_argument('-s', '--split',
 		action='store_true', dest='split', default=False,
 		help='Split payment.',)
@@ -179,11 +180,15 @@ def main():
 		account = read_config('account', None, None)
 	else:
 		account = read_config('account', args.account, None)
+
 	"""
 	Set date.
-	See https://github.com/robotmachine/ql/issues/26
 	"""
-	date = datesel()
+	if args.rdate is not None:
+		rdate = int(args.rdate)
+		date = relDate(rdate)
+	else:
+		date = datetime.date.today()
 
 	"""
 	Sets the cleared status based on -x / --not-cleared
@@ -248,12 +253,19 @@ def read_config(query, varone, vartwo):
 					result = varone
 	return result
 
+"""
 def datesel():
 	tdateraw = []
 	today = datetime.date.today()
 	tdateraw.append(today)
 	tdate = str(tdateraw[0])
 	return tdate
+"""
+
+def relDate(rdate):
+	today = date.today()
+	result = today - timedelta(rdate)
+	return result
 
 def splitter(amount):
 	if amount is None:
@@ -315,7 +327,7 @@ def assembly(date, clrstat, merchant, amlist, catlist, account, trtotal):
 		ledger_list.append('\t\t\t$-')
 		ledger_list.append(str(trtotal))
 	ledger_list.append('\n')
-	result = ''.join(ledger_list)
+	result = ''.join([str(i) for i in ledger_list])
 	return result
 
 def printer(ledger_file, ledger_entry):
