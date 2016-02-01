@@ -1,27 +1,26 @@
 # QuickLedger
-### Entry creation utility for [ledger](http://ledger-cli.org/ "ledger").  
+## Entry creation utility for [ledger](http://ledger-cli.org/ "ledger").  
 
-#### Install
+### Install
 1. Download [the archive](https://github.com/robotmachine/QuickLedger/tarball/master)
 2. Run `chmod +x ql`
 3. Move `ql` to `/usr/local/bin/` or somewhere else in `$PATH`
   
  
-#### Configuration File  
+### Configuration File  
 `ql` keeps all data in `$HOME/.qlrc`  
 
-##### [file]
+#### [file]
 The ledger_file section under [file] is created automatically during the first run wizard. 
 
-##### [account]
+#### [account]
 Optional account section can be used to create a nickname for accounts. When specifying an account either via -a/--account or interactively, `ql` will attempt to match the entry with the nicknames in this section. If no match is found the literal input will be used. The default_account should be set to the nickname of the desired default account. 
 
-##### [merchant] & [category]
+#### [merchant] & [category]
 The optional merchant and category section can be used to create nicknames and default categories for merchants. When specifying the merchant with either 
 The ~/.qlrc file can be manually edited to include [merchant] nicknames. Additionally, adding a [category] section will use the matching category for that merchant nickname.
-
   
-##### Sample ~/.qlrc
+#### Sample ~/.qlrc
 ```
 $> cat ~/.qlrc  
   
@@ -30,8 +29,8 @@ ledger_file = /home/robotmachine/doc/Ledger.dat
   
 [account]
 default_account = CHEQ 
-CHEQ = Assets:MyBank:Chequing  
-SAVE = Assets:MyBank:Savings  
+CHEQ = Assets:MyCreditUnion:Chequing  
+SAVE = Assets:MyCreditUnion:Savings  
   
 [merchant]  
 SD = Sundance Natural Foods  
@@ -43,19 +42,21 @@ SD = Expenses:Groceries
 SQ = Expenses:Auto:Fuel  
 ```
   
-#### Usage Continued
-When using the `ql -a ACCOUNT` option, `ql` will attempt to match the entry with one of the accounts in the [account] section of ~/.qlrc If a match is not found, the literal string will be used.  
+### Usage
+`ql` requires an account, a merchant name, a category, and an amount at minimum. The date will always be set to today if no date option is selected. If any required information is missing from the command line, `ql` will enter interactive mode and prompt the user for the missing data.  
   
-The same is true of the `ql -m MERCHANT` option. If a match is found for the merchant and the same entry is present under [category], then the category will be used. If that does not match, then it will prompt interactively for an expense category.  
+Only one of -e/--expense or -c/--category is needed. The -e/--expense option will prepend Expenses: to the category name to save you typing. In interactive mode Expenses is prepended automatically as well.  
   
+Similarly, only one of -d/--date or -r/--rdate is needed. The -d/--date option takes a YYYY-MM-DD formatted date to use as the transaction date. -r/--rdate will use today's date and then offset the provided whole positive or negative integer. A positive value goes backward and a negative value goes forward. Ie. 1 is yesterday and -1 is tomorrow.  
+
 The -s/--split option will take the -t amount as the total (or prompt for one) and prompt through splitting the transaction between multiple categories (see example). `ql` does its best to make sure the transaction will balance and will add the total as a negative balance which will cause an error in `Ledger` if the amounts do not reconcile. Entering a 0 for any of the splits will use the remainder of the balance.  
   
 The -x/--not-cleared option will use a ! instead of * between the date and the merchant as per the `Ledger` documentation to mark the transaction as not cleared. Please see `Ledger` documentation on how this works. Note: You will need to manually edit your ledger.dat file to mark it as cleared. Re-running `ql` without the -x will not mark the transaction as cleared-- it will only add an additional entry for the same amount.  
 
-#### Examples
+### Examples
 Everyone loves examples.  
  
-##### Interactive Mode
+#### Interactive Mode
 Running `ql` with no options will enter an interactive mode.  
 ```
 $> ql
@@ -71,7 +72,7 @@ Wrote entry to /home/robotmachine/doc/Ledger.dat:
         Assets:OSCU:Brian
  ```
  
-##### Using Arguments
+#### Using Arguments
 The same transaction as above, but using arguments instead of interactive.
 Both lines are equivalent using the long and short version of the arguments.    
 ```
@@ -84,7 +85,7 @@ Wrote entry to /home/robotmachine/doc/Ledger.dat:
         Expenses:Food:Groceries                 $40.21
         Assets:OSCU:Brian
 ```
-##### Using Nicknames
+#### Using Nicknames
 The above sample .qlrc file is used for the next example.  
 ```
 $> ql -m SD -t 27.50
@@ -93,12 +94,12 @@ $> ql -m SD -t 27.50
 Wrote entry to /home/robotmachine/doc/Ledger.dat:
 2016-02-01 * Sundance Natural Foods  
 	Expenses:Groceries		$27.50  
-	Assets:MyBank:Chequing  
+	Assets:MyCreditUnion:Chequing  
 ```
 
-##### Dates
+#### Dates
 Relative date:  
-(Current date in examples is 2016-02-01)
+(Current date in example is 2016-02-01)
 ```
 $> ql -m "Bob's Groceries" -e "Food:Groceries" -t 40.21 -r 1
 ```
@@ -119,7 +120,7 @@ Wrote entry to /home/robotmachine/doc/Ledger.dat:
         Assets:OSCU:Brian
 ```
 
-##### Split Transaction
+#### Split Transaction
 ```
 $> ql -m "Bob's Groceries" -t 100 --split
 ```
@@ -136,24 +137,47 @@ Enter category for split number 2:      Expenses:Healthcare:Supplements
   
 Wrote entry to /home/robotmachine/doc/Ledger.dat:  
 2016-02-01 * Bob's Groceries
-        Expenses:Healthcare:Supplements  $25.00    
-        Expenses:Groceries              $75.00  
-        Assets:MyBank:Chequing          $-100.00  
+        Expenses:Healthcare:Supplements        $25.00    
+        Expenses:Groceries                     $75.00  
+        Assets:MyCreditUnion:Chequing          $-100.00  
  ```
   
-##### Transfer
+#### Transfer
 Use -a/--account for where funds are coming from and -c/--category for where the funds are going to.  
+Note: Account nicknames from .qlrc do not work with -c/--category
 ```
-$> ql -m Transfer -a SAVE -c Assets:MyBank:Chequing -t 100
+$> ql -m Transfer -a SAVE -c Assets:MyCreditUnion:Chequing -t 100
 ```
 ```
 Wrote entry to /home/robotmachine/doc/Ledger.dat:  
 2016-02-01 * Bob's Groceries
-	Assets:MyBank:Chequing		$100.00
-        Assets:MyBank:Savings
+	Assets:MyCreditUnion:Chequing		$100.00
+        Assets:MyCreditUnion:Savings
+```
+  
+#### Other Examples
+Credit Card Payment  
+```
+$> ql -m "My Credit Union" -a CHEQ -c "Liabilities:Credit:CU Visa" -t 100
+```
+```
+Wrote entry to /home/robotmachine/doc/Ledger.dat:  
+2016-02-01 * My Credit Union
+        Liabilities:Credit:CU Visa                      $100.00
+        Assets:MyCreditUnion:Chequing
+```
+Income: Getting Paid  
+```
+$> ql -m "My Employer" -a Income:Salary:Employer -c Assets:MyCreditUnion:Chequing -t 2140.23
+```
+```
+Wrote entry to /home/robotmachine/doc/Ledger.dat:  
+2016-02-01 * My Employer
+	Assets:MyCreditUnion:Chequing			$2140.23
+	Income:Salary:Employer
 ```
 
-#### Built-In Help
+### Built-In Help
 ```
 $> ql -h
 ```
@@ -186,9 +210,6 @@ optional arguments:
   -s, --split           Split payment.
   -x, --not-cleared     Mark transaction as not-cleared/pending.
   --list                List settings in config file.
-  --set-acct            Set up accounts in config file.
-  --set-merch           Set up merchants in config file.
-  --set-cat             Set up categories in config file.
   --config ALT_CONFIG   Specify alternate config file.
   -v, --version         Print version.
 ```
