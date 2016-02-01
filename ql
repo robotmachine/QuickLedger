@@ -242,15 +242,6 @@ def read_config(query, varone, vartwo):
 					result = varone
 	return result
 
-"""
-def datesel():
-	tdateraw = []
-	today = datetime.date.today()
-	tdateraw.append(today)
-	tdate = str(tdateraw[0])
-	return tdate
-"""
-
 def relDate(rdate):
 	today = date.today()
 	result = today - timedelta(rdate)
