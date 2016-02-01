@@ -7,7 +7,7 @@
 | |_| | |_| | | (__|   <| |__|  __/ (_| | (_| |  __/ |   
  \__\_\\__,_|_|\___|_|\_\_____\___|\__,_|\__, |\___|_|   
                                          |___/           
- v.1.0.0
+ v.0.7
 
 Project Homepage: 	https://github.com/robotmachine/QuickLedger
 
@@ -33,7 +33,7 @@ from decimal import *
 from datetime import date, timedelta
 
 global qlVer
-qlVer = str("1.0.0")
+qlVer = str("0.7")
 
 global config
 config = configparser.ConfigParser()
@@ -60,7 +60,10 @@ def main():
 		help='Set transaction amount.')
 	parser.add_argument('-r', '--rdate',
 		action='store', dest='rdate', default=None,
-		help='Set number of days ago transaction occurred. Overrides --date.')
+		help='Set number of days ago transaction occurred. Positive value for days in the past, negative value for days in the future. Overrides --date.')
+	parser.add_argument('-d', '--date',
+		action='store', dest='date', default=None,
+		help='Set date of transaction. Format is YYYY-MM-DD.')
 	parser.add_argument('-s', '--split',
 		action='store_true', dest='split', default=False,
 		help='Split payment.',)
@@ -187,6 +190,9 @@ def main():
 	if args.rdate is not None:
 		rdate = int(args.rdate)
 		date = relDate(rdate)
+	elif args.date is not None:
+		valiDate(args.date)
+		date = args.date
 	else:
 		date = datetime.date.today()
 
@@ -266,6 +272,13 @@ def relDate(rdate):
 	today = date.today()
 	result = today - timedelta(rdate)
 	return result
+
+def valiDate(date):
+	try:
+		datetime.datetime.strptime(date, '%Y-%m-%d')
+	except:
+		print("Incorrect format. YYYY-MM-DD required.")
+		quit()
 
 def splitter(amount):
 	if amount is None:
