@@ -7,7 +7,6 @@
 | |_| | |_| | | (__|   <| |__|  __/ (_| | (_| |  __/ |   
  \__\_\\__,_|_|\___|_|\_\_____\___|\__,_|\__, |\___|_|   
                                          |___/           
-Version 1.0.1
 
 Project Homepage: 	https://github.com/robotmachine/QuickLedger
 
