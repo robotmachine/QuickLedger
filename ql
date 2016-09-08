@@ -7,7 +7,6 @@
 | |_| | |_| | | (__|   <| |__|  __/ (_| | (_| |  __/ |   
  \__\_\\__,_|_|\___|_|\_\_____\___|\__,_|\__, |\___|_|   
                                          |___/           
-Version 1.0.0
 
 Project Homepage: 	https://github.com/robotmachine/QuickLedger
 
@@ -33,7 +32,7 @@ from decimal import *
 from datetime import date, timedelta
 
 global qlVer
-qlVer = str("1.0.0")
+qlVer = str("1.0.1")
 
 global config
 config = configparser.ConfigParser()
@@ -117,6 +116,8 @@ def main():
 	"""
 	if args.ledger_file and os.path.exists(os.path.expanduser(args.ledger_file)):
 		ledger_file = os.path.expanduser(args.ledger_file)
+	elif os.path.exists(os.path.expanduser(os.environ['LEDGER'])):
+		ledger_file = os.path.expanduser(os.environ['LEDGER'])
 	else:
 		ledger_file = read_config('ledger', None, None)
 	"""
