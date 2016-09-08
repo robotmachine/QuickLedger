@@ -1,0 +1,15 @@
+[account]
+default_account = cheq 
+cheq = Assets:MyCreditUnion:Chequing  
+save = Assets:MyCreditUnion:Savings  
+  
+[merchant]  
+ef = Earth Fare
+pub = Publix
+gas = Joe's Fuel
+
+[category]
+groc = Expenses:Groceries
+ef = Expenses:Groceries  
+pub = Expenses:Groceries  
+gas = Expenses:Auto:Fuel  

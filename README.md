@@ -28,18 +28,20 @@ $> cat ~/.qlrc
 ledger_file = /home/robotmachine/doc/Ledger.dat  
   
 [account]
-default_account = CHEQ 
-CHEQ = Assets:MyCreditUnion:Chequing  
-SAVE = Assets:MyCreditUnion:Savings  
+default_account = cheq 
+cheq = Assets:MyCreditUnion:Chequing  
+save = Assets:MyCreditUnion:Savings  
   
 [merchant]  
-SD = Sundance Natural Foods  
-SQ = SeQuential Biofuels  
+ef = Earth Fare
+pub = Publix
+gas = Joe's Fuel
 
 [category]
 groc = Expenses:Groceries
-SD = Expenses:Groceries  
-SQ = Expenses:Auto:Fuel  
+ef = Expenses:Groceries  
+pub = Expenses:Groceries  
+gas = Expenses:Auto:Fuel  
 ```
   
 ### Usage
