@@ -197,7 +197,10 @@ def read_config(query, varone, vartwo):
 	"""
 	"""
 	if query == 'ledger':
-		result = os.path.expanduser(config['file']['ledger_file'])
+		try:
+			result = os.path.expanduser(config['file']['ledger_file'])
+		except:
+			set_config()
 	elif query == 'account':
 		if varone is None:
 			try:
