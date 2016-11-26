@@ -28,18 +28,17 @@ $> cat ~/.qlrc
 ledger_file = /home/robotmachine/doc/Ledger.dat  
   
 [account]
-default_account = CHEQ 
-CHEQ = Assets:MyCreditUnion:Chequing  
-SAVE = Assets:MyCreditUnion:Savings  
+default_account = cheq 
+cheq = Assets:MyCreditUnion:Chequing  
+save = Assets:MyCreditUnion:Savings  
   
 [merchant]  
-SD = Sundance Natural Foods  
-SQ = SeQuential Biofuels  
+sm = Supermercado del Sol
+gas = Joe's Fuel
 
 [category]
-groc = Expenses:Groceries
-SD = Expenses:Groceries  
-SQ = Expenses:Auto:Fuel  
+sm = Expenses:Groceries  
+gas = Expenses:Auto:Fuel  
 ```
   
 ### Usage
@@ -61,13 +60,13 @@ Running `ql` with no options will enter an interactive mode.
 ```
 $> ql
 Merchant name:
-        Bob's Groceries
+        Supermercardo del Sol
 Category:
         Expenses:Food:Groceries
 Amount: $40.21
 
 Wrote entry to /home/robotmachine/doc/Ledger.dat:
-2016-02-01 * Bob's Groceries
+2016-02-01 * Supermercado del Sol
         Expenses:Food:Groceries                 $40.21
 	Assets:MyCreditUnion:Chequing  
  ```
@@ -76,24 +75,24 @@ Wrote entry to /home/robotmachine/doc/Ledger.dat:
 The same transaction as above, but using arguments instead of interactive.
 Both lines are equivalent using the long and short version of the arguments.    
 ```
-$> ql --merchant "Bob's Groceries" --expense "Food:Groceries" --amount 40.21
-$> ql -m "Bob's Groceries" -e "Food:Groceries" -t 40.21
+$> ql --merchant "Supermercado del Sol" --expense "Food:Groceries" --amount 40.21
+$> ql -m "Supermercado del Sol" -e "Food:Groceries" -t 40.21
 ```
 ```
 Wrote entry to /home/robotmachine/doc/Ledger.dat:
-2016-02-01 * Bob's Groceries
+2016-02-01 * Supermercado del Sol
         Expenses:Food:Groceries                 $40.21
 	Assets:MyCreditUnion:Chequing  
 ```
 #### Using Nicknames
 The above sample .qlrc file is used for the next example.  
 ```
-$> ql -m SD -t 27.50
+$> ql -m sm -t 40.21
 ```
 ```
 Wrote entry to /home/robotmachine/doc/Ledger.dat:
-2016-02-01 * Sundance Natural Foods  
-	Expenses:Groceries		$27.50  
+2016-02-01 * Supermercado del Sol
+        Expenses:Food:Groceries                 $40.21
 	Assets:MyCreditUnion:Chequing  
 ```
 
@@ -101,13 +100,13 @@ Wrote entry to /home/robotmachine/doc/Ledger.dat:
 Relative date:  
 (Current date in example is 2016-02-01)
 ```
-$> ql -m "Bob's Groceries" -e "Food:Groceries" -t 40.21 -r 1
+$> ql -m sm -t 40.21 -r 1
 ```
 ```
 Wrote entry to /home/robotmachine/doc/Ledger.dat:
-2016-01-31 * Bob's Groceries
+2016-01-31 * Supermercado del Sol
         Expenses:Food:Groceries                 $40.21
-        Assets:OSCU:Brian
+	Assets:MyCreditUnion:Chequing  
 ```
 Manual date:  
 ```
@@ -115,14 +114,14 @@ $> ql -m "Bob's Groceries" -e "Food:Groceries" -t 40.21 -d 2016-01-15
 ```
 ```
 Wrote entry to /home/robotmachine/doc/Ledger.dat:
-2016-01-15 * Bob's Groceries
+2016-01-15 * Supermercado del Sol
         Expenses:Food:Groceries                 $40.21
-        Assets:OSCU:Brian
+	Assets:MyCreditUnion:Chequing  
 ```
 
 #### Split Transaction
 ```
-$> ql -m "Bob's Groceries" -t 100 --split
+$> ql -m sm -t 100 --split
 ```
 ```
 Total is $100.00  
@@ -136,7 +135,7 @@ Enter amount for split number 2:        $0
 Enter category for split number 2:      Expenses:Healthcare:Supplements  
   
 Wrote entry to /home/robotmachine/doc/Ledger.dat:  
-2016-02-01 * Bob's Groceries
+2016-02-01 * Supermercado del Sol
         Expenses:Healthcare:Supplements        $25.00    
         Expenses:Groceries                     $75.00  
         Assets:MyCreditUnion:Chequing          $-100.00  
@@ -146,11 +145,11 @@ Wrote entry to /home/robotmachine/doc/Ledger.dat:
 Use -a/--account for where funds are coming from and -c/--category for where the funds are going to.  
 Note: Account nicknames from .qlrc do not work with -c/--category
 ```
-$> ql -m Transfer -a SAVE -c Assets:MyCreditUnion:Chequing -t 100
+$> ql -m Transfer -a save -c Assets:MyCreditUnion:Chequing -t 100
 ```
 ```
 Wrote entry to /home/robotmachine/doc/Ledger.dat:  
-2016-02-01 * Bob's Groceries
+2016-02-01 * Transfer
 	Assets:MyCreditUnion:Chequing		$100.00
         Assets:MyCreditUnion:Savings
 ```
@@ -158,7 +157,7 @@ Wrote entry to /home/robotmachine/doc/Ledger.dat:
 #### Other Examples
 Credit Card Payment  
 ```
-$> ql -m "My Credit Union" -a CHEQ -c "Liabilities:Credit:CU Visa" -t 100
+$> ql -m "My Credit Union" -c "Liabilities:Credit:CU Visa" -t 100
 ```
 ```
 Wrote entry to /home/robotmachine/doc/Ledger.dat:  

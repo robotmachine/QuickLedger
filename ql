@@ -93,7 +93,7 @@ def main():
 	if args.alt_config is not None:
 		pathtest = os.path.exists(os.path.expanduser(args.alt_config))
 		if pathtest is False:
-			print('\n%s not found.\n' % args.alt_config)
+			print('\nAlternate config file %s was not found.\n' % args.alt_config)
 			settings = None
 		else:
 			settings = os.path.expanduser(args.alt_config)
@@ -197,7 +197,10 @@ def read_config(query, varone, vartwo):
 	"""
 	"""
 	if query == 'ledger':
-		result = os.path.expanduser(config['file']['ledger_file'])
+		try:
+			result = os.path.expanduser(config['file']['ledger_file'])
+		except:
+			set_config()
 	elif query == 'account':
 		if varone is None:
 			try:
