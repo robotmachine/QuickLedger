@@ -147,7 +147,7 @@ def main():
 	if args.amount is None and split is False:
 		amlist = []
 		catlist = []
-		amlist.append(dollar_tool(query_tool('Amount: $')))
+		amlist.append(dollar_tool(query_tool('Amount:\n\t$')))
 		catlist.append(str(category))
 		trtotal = amlist[0]
 	elif args.amount is not None and split is False:
