@@ -12,7 +12,7 @@ Project Homepage: 	https://github.com/robotmachine/QuickLedger
 
 QuickLedger
 Entry creation utility for https://ledger-cli.org
-(C)2014-2016 Brian A. Carter (robotmachine@gmail.com)
+(C)2014-2017 Brian A. Carter (brian@robotmachine.net)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -551,6 +551,6 @@ def dollar_tool(query):
 	return result
 
 def PrintVersion():
-	print("\nQuickLedger v."+str(qlVer)+"\n\n(C)2014-2016 Brian A. Carter\nrobotmachine@gmail.com\nhttps://github.com/robotmachine/QuickLedger")
+	print("\nQuickLedger v."+str(qlVer)+"\n\n(C)2014-2016 Brian A. Carter\nbrian@robotmachine.net\nhttps://github.com/robotmachine/QuickLedger")
 	quit()
 main()
